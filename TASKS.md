@@ -85,21 +85,22 @@ baseline (Phase 2) must be built and its results recorded first.
 ## Phase 6 — CI
 
 - [x] `.github/workflows/ci.yml`: lint + test on push/PR to `main`
-- [ ] Commit: "ci: add lint + test workflow"
+- [x] Commit: "ci: add lint + test workflow"
 
 ## Phase 7 — Documentation Polish
 
-- [ ] Finalize `README.md` per the required structure in `PROJECT.md` §10:
+- [x] Finalize `README.md` per the required structure in `PROJECT.md` §10:
       problem statement, methodology with named bias controls, the
       naive-vs-walk-forward comparison table, honest limitations, and a
       plainly stated verdict
-- [ ] Fill `DECISIONS.md` with all real decisions (instrument choice,
+- [x] Fill `DECISIONS.md` with all real decisions (instrument choice,
       window sizes, metric choice, configuration-count disclosure, and
       critically the verdict itself, stated precisely)
-- [ ] `CHANGELOG.md` v1.0.0 entry
-- [ ] (Optional) `paper/writeup.md` if the README doesn't fully capture
-      the story on its own
-- [ ] Final review: does the README ever claim the complex model is
+- [x] `CHANGELOG.md` v1.0.0 entry
+- [x] (Optional) `paper/writeup.md` if the README doesn't fully capture
+      the story on its own (not needed; the file points to the README and
+      `docs/results_comparison.md`)
+- [x] Final review: does the README ever claim the complex model is
       "better" (or "not better") without pointing to the specific
       walk-forward numbers that support that claim?
 

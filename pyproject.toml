@@ -1,6 +1,6 @@
 [project]
 name = "vol-forecast-model-comparison"
-version = "0.1.0"
+version = "1.0.0"
 description = "Simple (EWMA/GARCH) vs. complex ML volatility forecasting, compared under naive and proper walk-forward validation, with an honest verdict on whether complexity was justified."
 authors = [{ name = "Mateen Iqbal" }]
 readme = "README.md"

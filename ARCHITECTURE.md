@@ -47,10 +47,11 @@ estimate                   package
               |
               v
       src/complex_model.py
-   gradient boosting / small NN,
-   engineered features (lagged
-   realized vol, returns, volume),
-   given a genuinely fair chance
+   LightGBM, gamma (QLIKE)
+   objective, 18 engineered
+   features (realized variance,
+   returns, range, volume),
+   tuned inside each training set
 ```
 
 ## 4. Validation + Comparison Flow (the project's core)
@@ -93,7 +94,18 @@ models
 | `src/baseline_ewma.py`, `src/baseline_garch.py` | Simple volatility forecasts | ML modeling |
 | `src/complex_model.py` | ML-based volatility forecast | Baseline modeling |
 | `src/validation.py` | Both naive and walk-forward validation harnesses | Metric computation |
-| `src/evaluate.py` | QLIKE/RMSE, comparison table generation | Model fitting |
+| `src/evaluate.py` | QLIKE/RMSE, Diebold–Mariano tests, comparison records; drives runs through the validation harness | Model definitions (its only direct fit is the Phase 5 ceiling-probe refit of one fold) |
+
+### Recorded outputs
+
+Each is deterministic and produced by one command (see `scripts/run_pipeline.sh`).
+
+| File | Command | Contents |
+|---|---|---|
+| `data/dataset_manifest.json` | `python -m src.data` | Instrument, date range, cleaning counts, drift checksums |
+| `docs/phase2_naive_baselines.json` | `python -m src.evaluate naive-baselines` | Baseline naive-split scores, recorded before the complex model existed |
+| `docs/phase4_validation_results.json` | `python -m src.evaluate validate` | All models under both schemes, with per-fold fits |
+| `docs/phase5_comparison.json` | `python -m src.evaluate compare` | Comparison table, DM tests, diagnostics |
 
 ## 6. Key Architectural Decisions (summary — full rationale in DECISIONS.md)
 

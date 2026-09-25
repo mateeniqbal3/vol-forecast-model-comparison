@@ -1,7 +1,8 @@
 # DECISIONS.md — Architecture Decision Records
 
-Format: ADR number, status, Context / Decision / Consequences. Append real
-ADRs as decisions are made.
+Format: ADR number, status, Context / Decision / Consequences. ADRs were
+written as each decision was made; later notes mark where a consequence
+was resolved.
 
 Status values: `Proposed`, `Accepted`, `Superseded by ADR-00X`, `Rejected`.
 
@@ -106,8 +107,9 @@ Why:
   serially correlated; any significance test in Phase 5 needs
   autocorrelation-robust (HAC) standard errors.
 - The target at t is only fully observed at the close of t+5. At forecast
-  origin T, training may use target rows t <= T - 5 only; the Phase 4
-  walk-forward harness must purge those 5 rows. Without the purge, the
+  origin T, training may use target rows t <= T - 5 only. The Phase 4
+  walk-forward harness purges those 5 rows (ADR-003), and tests enforce
+  it. Without the purge, the
   last training labels would overlap the test window, which is exactly
   the leakage walk-forward validation exists to prevent.
 
@@ -158,9 +160,10 @@ Why:
 - Expanding windows weight the calm 1990s and the 2008 episode ever less as
   the sample grows, but never drop them.
 - The naive split scores random dates from 1994–2025, while walk-forward
-  scores 2000–2025. Phase 5 must separate the effect of the sample period
-  from the effect of the validation scheme, for example by also scoring the
-  naive forecasts on dates from 2000 on only.
+  scores 2000–2025. Phase 5 separated the sample-period effect from the
+  scheme effect by also scoring the naive forecasts on the 1,321 naive test
+  dates from 2000 on, where every model also has a walk-forward forecast
+  (ADR-005).
 
 ---
 
@@ -265,7 +268,9 @@ feature set, objective, grid or procedure was tried.
   selection bias would only have worked in its favor.
 - The ML model has more information than the baselines, not just more
   flexibility: intraday range, open and volume. Any advantage it shows
-  cannot be attributed to model complexity alone. Phase 5 must say so.
+  cannot be attributed to model complexity alone. In the event, it showed
+  no significant advantage even with that extra information (ADR-005,
+  `docs/results_comparison.md` §5).
 - Early stopping and the inner grid are chosen from the most recent 20%
   of each training set, which favors settings that work in the latest
   regime.
@@ -337,8 +342,13 @@ Mechanism:
 - 2008 alone moves the mean QLIKE difference by +0.027, more than twice
   LightGBM's net advantage.
 - The naive split concealed this by training on weeks from the very
-  crises it tested, and by letting the model learn from neighboring
-  targets that share returns with each test target.
+  crises it tested. On the 115 naive test dates in 2008 and 2020, the
+  naive-split LightGBM forecast 0.00185 on average and the walk-forward
+  LightGBM 0.00127, against a realized 0.00284. Outside those years it
+  still flattered LightGBM by 0.038 QLIKE (GARCH: 0.007). That is
+  consistent with the model learning from neighboring training targets
+  that share four of five returns with each test target, the path ADR-008
+  identified in advance. The two paths were not measured separately.
 
 The QLIKE/RMSE disagreement has the same cause. The top 1% of weeks carry
 83% of LightGBM's squared error, and its mean forecast is 0.79 of mean
@@ -433,9 +443,10 @@ Why these choices:
 
 **Consequences:**
 - The simple side of the comparison cannot capture the leverage effect. A
-  complex model that uses signed returns may gain from this, and that is a
-  legitimate advantage, not an artefact. The results discussion must
-  attribute it that way rather than to "ML" in general.
+  complex model that uses signed returns may gain from this, and that
+  would be a legitimate advantage, not an artefact. In the event, LightGBM
+  showed no significant walk-forward advantage over GARCH(1,1), so no gain
+  needed attributing (ADR-005).
 - EWMA with a fixed λ is not tuned to SPY, so it may be a weaker baseline
   than an estimated-λ EWMA. GARCH(1,1) is the estimated simple model.
 
@@ -496,7 +507,9 @@ test and are not evidence about out-of-sample performance.
   Neither model learns from individual target rows, so the overlap between
   training and test targets gives them nothing to exploit. A model fitted
   row by row to targets (Phase 3) is exposed to that overlap as well. How
-  much any of this matters is a Phase 5 measurement, not an assumption.
+  much any of this matters was left to Phase 5 to measure. On identical
+  dates the naive split flattered EWMA by exactly 0, GARCH by 0.008 QLIKE
+  and LightGBM by 0.065 (ADR-005).
 - `PROJECT.md` §2 says the baseline's out-of-sample performance should be
   recorded before the complex model exists, while `TASKS.md` places the
   walk-forward harness in Phase 4. The owner decided at the start of Phase 3
@@ -504,15 +517,3 @@ test and are not evidence about out-of-sample performance.
   until the complex model is built, so its feature design cannot target the
   baseline's walk-forward score. Only the naive baseline numbers existed
   while the complex model was designed.
-
----
-
-## ADR-009: [Template for future ADRs — delete this line and use the format below]
-
-**Status:** Proposed / Accepted / Superseded / Rejected
-
-**Context:** What situation forced this decision?
-
-**Decision:** What was decided?
-
-**Consequences:** What trade-offs does this create? Be honest.

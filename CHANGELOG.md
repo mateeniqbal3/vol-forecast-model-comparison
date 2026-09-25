@@ -5,8 +5,36 @@ All notable changes to this project are documented here. Loosely follows
 
 ## [Unreleased]
 
-### Planned
-- README and final documentation (Phase 7)
+---
+
+## [1.0.0] — 2026-09-25 — Comparison complete
+
+First complete release. EWMA, GARCH(1,1) and LightGBM volatility forecasts
+for SPY, each scored under a naive random split and under walk-forward
+validation. Verdict: the ML model's added complexity was **not
+justified**. Its walk-forward QLIKE advantage over GARCH(1,1) is 0.012
+(Diebold–Mariano p = 0.47), its RMSE is worse, and the naive split had
+made it look like a decisive winner. See `README.md` and
+`docs/results_comparison.md`.
+
+### Changed
+- `README.md`: rewritten around the results, following `PROJECT.md` §10.
+  It covers the problem and hypothesis, bias controls with the order in
+  which each design was fixed, the naive-vs-walk-forward table, the
+  tree-ceiling mechanism, limitations and the verdict. Every comparative
+  claim cites its numbers.
+- `DECISIONS.md`: final review. Consequences that earlier ADRs deferred
+  to later phases are resolved with the measured numbers. ADR-005's
+  description of the neighboring-target leak is aligned with the results
+  document (consistent with the data, not measured separately). The
+  unused ADR template was removed.
+- `ARCHITECTURE.md`: the complex model is described as built (LightGBM),
+  `evaluate.py`'s responsibilities are corrected, and the recorded outputs
+  are listed.
+- `PROJECT.md`: status set to complete; success criteria checked.
+- `paper/writeup.md`: points to the README and the results document
+  instead of duplicating them.
+- `pyproject.toml`: version 1.0.0.
 
 ---
 

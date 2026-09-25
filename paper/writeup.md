@@ -1,5 +1,6 @@
-# Volatility Forecasting Model Comparison — Short Writeup
+# Volatility Forecasting Model Comparison — Writeup
 
-> Optional per TASKS.md Phase 7 -- the README is this project's primary
-> deliverable (see PROJECT.md section 10). Only written if the README
-> doesn't fully capture the story on its own.
+Not written as a separate paper. The README and
+[`docs/results_comparison.md`](../docs/results_comparison.md) together hold
+the full account: problem, methodology, results, mechanism, limitations and
+verdict. The design record is in [`DECISIONS.md`](../DECISIONS.md).

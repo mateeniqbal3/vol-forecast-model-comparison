@@ -1,6 +1,7 @@
 # PROJECT.md — Volatility Forecasting with Proper Time-Series Validation
 
-> **Status:** In progress — see `TASKS.md`
+> **Status:** Complete (v1.0.0). Verdict and results in `README.md` and
+> `docs/results_comparison.md`.
 > **Owner:** mateeniqbal3
 > **Track:** Quant Finance (standalone — not tied to any academic
 > semester/summer phase, not part of the RTP/Fulbright thesis narrative,
@@ -78,22 +79,22 @@ performance.
 
 ## 4. Success Criteria (Definition of Done)
 
-- [ ] Historical price data acquired (free/public source — see §5)
-- [ ] Realized volatility target constructed (e.g. from squared/absolute
+- [x] Historical price data acquired (free/public source — see §5)
+- [x] Realized volatility target constructed (e.g. from squared/absolute
       returns over a forward window — the forecasting target, computed
       without look-ahead into the training features)
-- [ ] Simple baseline implemented: EWMA volatility estimate and/or a
+- [x] Simple baseline implemented: EWMA volatility estimate and/or a
       GARCH-family model (e.g. GARCH(1,1) via the `arch` package)
-- [ ] Complex model implemented: a gradient-boosting or small neural-
+- [x] Complex model implemented: a gradient-boosting or small neural-
       network model using engineered features (e.g. lagged realized
       volatility, returns, volume, other available signals)
-- [ ] **Walk-forward validation** implemented and used for both models —
+- [x] **Walk-forward validation** implemented and used for both models —
       never a random train/test split or k-fold cross-validation on this
       time-series data (see §8)
-- [ ] Both models compared on identical out-of-sample windows, using the
+- [x] Both models compared on identical out-of-sample windows, using the
       same forecasting metric(s) (e.g. QLIKE loss and/or RMSE against
       realized volatility — see §7)
-- [ ] **Side-by-side results**: naive/random-split validation numbers vs.
+- [x] **Side-by-side results**: naive/random-split validation numbers vs.
       proper walk-forward validation numbers, for both models — showing
       whether (and how much) a naive validation approach would have
       overstated either model's real performance (see §9 — this replaces
@@ -101,15 +102,15 @@ performance.
       standalone project's brief template, adapted to fit a forecasting
       task rather than a trading strategy; see `DECISIONS.md` for this
       adaptation rationale)
-- [ ] Explicit bias-control section: look-ahead bias, survivorship bias
+- [x] Explicit bias-control section: look-ahead bias, survivorship bias
       (if applicable to the instrument/universe choice), and multiple-
       testing bias (if multiple feature sets or hyperparameter
       configurations were tried) — each named and addressed concretely
-- [ ] Honest verdict stated plainly: did the added complexity help, and
+- [x] Honest verdict stated plainly: did the added complexity help, and
       by how much, given the data actually available?
-- [ ] Honest "what didn't work / limitations" section
-- [ ] README structured per §10
-- [ ] CI pipeline (lint + test) — no Docker/deployment required, same
+- [x] Honest "what didn't work / limitations" section
+- [x] README structured per §10
+- [x] CI pipeline (lint + test) — no Docker/deployment required, same
       minimal-footprint discipline as `pairs-trading-honest-costs`
 
 ## 5. Dataset — Free/Public Sources Only
