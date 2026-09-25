@@ -115,17 +115,52 @@ Why:
 
 ## ADR-003: Walk-forward window design
 
-**Status:** Proposed — resolves at the end of Phase 4
+**Status:** Accepted (Phase 4). Fixed before any walk-forward run of any
+model.
 
 **Context:** `PROJECT.md` §8 requires documented training window length,
 forecast horizon, and step size for the walk-forward harness.
 
-**Decision:** _Fill in: exact window sizes and stepping scheme (rolling
-vs. expanding window)._
+**Decision:** (`walk_forward_folds` in `src/validation.py`)
+- **Window:** expanding. Each fold trains on every eligible forecast date
+  (after the ADR-008 burn-in) up to the purge limit.
+- **First test date:** 2000-01-03, the first trading day of 2000. The first
+  training set holds 1,496 dates (1994-01-28 to late 1999).
+- **Step and test block:** one calendar year. Each model is refitted once
+  per year, at the first test date of the block, and forecasts every
+  trading day of that year with its parameters fixed. Its inputs still
+  update daily: the GARCH/EWMA filters and the ML features use data up to
+  each forecast date. That makes 26 folds, 2000 to 2025, and 6,534 test
+  dates (2000-01-03 to 2025-12-23).
+- **Horizon and purge:** h = 5. The fold whose first test date is `T0`
+  trains only on dates `t` at least 5 rows before `T0`, so every training
+  target (`t+1..t+5`) is observed by the close of `T0`. The information set
+  passed to `fit` therefore ends at `T0` (ADR-008's rule).
+- **All three models use identical folds.**
 
-**Consequences:** _Fill in — does the chosen window size trade off
-adaptability to regime change against training data sufficiency? Note
-this if relevant._
+Why:
+- The 2000 start gives the ML model about six years of training in the
+  first fold (about 1,200 inner-training and 300 inner-validation dates).
+  The test span covers the 2000–02 bear market, 2008–09, 2011, 2015–16,
+  2018, 2020 and 2022.
+- An expanding window uses all available history, which suits the ML model
+  (it needs data) and GARCH (whose estimates are noisy on short samples).
+  A rolling window would adapt faster to regime change, at the cost of less
+  data. It was not tried, so that no second protocol would be available to
+  choose between after seeing results.
+- An annual refit is a common, cheap schedule. Applying it to every model
+  keeps the protocol identical.
+
+**Consequences:**
+- Parameters can be up to a year stale. This affects all models equally in
+  schedule, but not necessarily in impact: the ML model may be more
+  sensitive to staleness than the three-parameter GARCH.
+- Expanding windows weight the calm 1990s and the 2008 episode ever less as
+  the sample grows, but never drop them.
+- The naive split scores random dates from 1994–2025, while walk-forward
+  scores 2000–2025. Phase 5 must separate the effect of the sample period
+  from the effect of the validation scheme, for example by also scoring the
+  naive forecasts on dates from 2000 on only.
 
 ---
 
@@ -207,6 +242,15 @@ printed only run time, the selected grid point, the tree count (148 and
 130) and the forecast range (median ≈13–14% annualized). No loss was
 computed or printed, including the inner-validation scores. Nothing was
 changed as a result.
+
+Phase 4 validation run (2026-09-25, `python -m src.evaluate validate`): this
+is the first time the ML model was scored under either scheme, and the first
+walk-forward score for any model. Configuration #1 was run unchanged under
+both schemes, and nothing in any model was changed after the scores were
+seen. The per-fold fits were inspected for bugs only: tree counts 36–412,
+the selected grid point varies by fold, and GARCH persistence drifts
+smoothly from 0.995 to 0.985. No bug was found. Scores are in
+`docs/phase4_validation_results.json`.
 
 **Consequences:**
 - The ML model has more information than the baselines, not just more

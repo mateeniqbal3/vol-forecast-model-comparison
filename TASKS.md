@@ -51,19 +51,19 @@ baseline (Phase 2) must be built and its results recorded first.
 - [x] Add every feature builder to `FEATURE_BUILDERS` in
       `tests/test_target.py` so the look-ahead check covers it
 - [x] `tests/test_complex_model.py`
-- [ ] Commit: "feat: complex ML model for volatility forecasting"
+- [x] Commit: "feat: complex ML model for volatility forecasting"
 
 ## Phase 4 — Walk-Forward Validation (mandatory)
 
-- [ ] Write `src/validation.py`: walk-forward validation harness (rolling
+- [x] Write `src/validation.py`: walk-forward validation harness (rolling
       or expanding training window, fixed forecast horizon, documented
       step size — see `DECISIONS.md`), PLUS a naive-random-split mode
       used only to reproduce the Phase 2 naive numbers for comparison
-- [ ] Purge training rows whose forward target window extends past the
+- [x] Purge training rows whose forward target window extends past the
       forecast origin (see `DECISIONS.md` ADR-002)
-- [ ] Re-evaluate BOTH the simple baseline(s) and the complex model under
+- [x] Re-evaluate BOTH the simple baseline(s) and the complex model under
       genuine walk-forward validation
-- [ ] `tests/test_validation.py`: specifically tests that the walk-forward
+- [x] `tests/test_validation.py`: specifically tests that the walk-forward
       split logic never lets a test-window timestamp precede or overlap
       its corresponding training window
 - [ ] Commit: "feat: walk-forward validation applied to all models"

@@ -1,17 +1,20 @@
 """
 Tests for the validation harness.
 
-Phase 2 covers the naive random split and the information-set rule shared
-by both schemes. Phase 4 adds the walk-forward tests: no test-window
-timestamp may precede or overlap its training window, and training rows
-whose forward target window extends past the forecast origin must be purged
-(see DECISIONS.md ADR-002).
+Covers the naive random split, the information-set rule shared by both
+schemes, and walk-forward: no test-window timestamp may precede or overlap
+its training window, and training rows whose forward target window extends
+past the forecast origin are purged (DECISIONS.md ADR-002, ADR-003).
 """
+
+from itertools import pairwise
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from src.baseline_ewma import EWMAModel
+from src.baseline_garch import GARCHModel
 from src.data import add_log_returns
 from src.target import HORIZON, forward_realized_variance
 from src.validation import (
@@ -21,7 +24,10 @@ from src.validation import (
     information_set_end,
     naive_random_split,
     run_split,
+    run_walk_forward,
+    walk_forward_folds,
 )
+from tests.conftest import make_synthetic_prices
 
 
 @pytest.fixture
@@ -80,8 +86,12 @@ def test_information_set_ends_h_rows_after_last_training_date(data):
 class _RecordingModel:
     name = "recorder"
 
+    def __init__(self):
+        self.history_ends = []
+
     def fit(self, history, train_dates):
         self.history_end = history.index.max()
+        self.history_ends.append(self.history_end)
         self.train_dates = train_dates
         return self
 
@@ -108,3 +118,106 @@ def test_run_split_rejects_missing_forecasts(data):
     idx = data.index
     with pytest.raises(ValueError, match="non-positive"):
         run_split(Broken(), data, Split(train=idx[:50], test=idx[60:70]))
+
+
+# --- Walk-forward -----------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def long_data():
+    return add_log_returns(make_synthetic_prices(1300, seed=5))
+
+
+@pytest.fixture(scope="module")
+def wf(long_data):
+    dates = forecast_dates(forward_realized_variance(long_data["log_return"]), burn_in=100)
+    folds = walk_forward_folds(long_data.index, dates, start="2022-01-01")
+    return dates, folds
+
+
+def test_walk_forward_has_one_fold_per_calendar_year(wf):
+    dates, folds = wf
+    expected_years = sorted(set(dates[dates >= "2022-01-01"].year))
+    assert [f.test[0].year for f in folds] == expected_years
+    for fold in folds:
+        assert set(fold.test.year) == {fold.test[0].year}
+
+
+def test_walk_forward_test_blocks_partition_the_test_period(wf):
+    dates, folds = wf
+    all_test = pd.DatetimeIndex(np.concatenate([f.test.to_numpy() for f in folds]))
+    assert all_test.is_unique and all_test.is_monotonic_increasing
+    assert all_test.equals(dates[dates >= "2022-01-01"])
+
+
+def test_no_test_date_precedes_or_overlaps_its_training_window(wf):
+    _, folds = wf
+    for fold in folds:
+        assert fold.train.max() < fold.test.min()
+        assert fold.train.intersection(fold.test).empty
+
+
+def test_training_targets_are_purged_before_the_fold_origin(wf, long_data):
+    """Every training target t+1..t+h must be observed by the close of the first test date."""
+    _, folds = wf
+    idx = long_data.index
+    for fold in folds:
+        origin = idx.get_loc(fold.test[0])
+        last_target_return = idx.get_indexer(fold.train) + HORIZON
+        assert last_target_return.max() <= origin
+        # The purge removes exactly the h dates whose targets are not yet observed.
+        assert idx.get_loc(fold.train.max()) == origin - HORIZON
+
+
+def test_information_set_ends_at_the_fold_origin(wf, long_data):
+    _, folds = wf
+    for fold in folds:
+        assert information_set_end(long_data.index, fold.train) == fold.test[0]
+
+
+def test_walk_forward_window_expands(wf):
+    dates, folds = wf
+    for earlier, later in pairwise(folds):
+        assert earlier.train.isin(later.train).all()
+        assert len(later.train) > len(earlier.train)
+    assert folds[0].train[0] == dates[0]
+
+
+def test_run_walk_forward_never_passes_data_after_the_origin(wf, long_data):
+    _, folds = wf
+    model = _RecordingModel()
+    forecasts, fits = run_walk_forward(model, long_data, folds)
+
+    assert model.history_ends == [f.test[0] for f in folds]
+    assert forecasts.index.equals(pd.DatetimeIndex(np.concatenate([f.test for f in folds])))
+    assert [fit["information_set_end"] for fit in fits] == [
+        f.test[0].strftime("%Y-%m-%d") for f in folds
+    ]
+
+
+def test_run_walk_forward_rejects_a_leaking_fold(long_data):
+    idx = long_data.index
+    leaking = Split(train=idx[100:400], test=idx[398:450])
+    with pytest.raises(ValueError, match="after its origin"):
+        run_walk_forward(_RecordingModel(), long_data, [leaking])
+
+
+def test_walk_forward_rejects_start_without_training_dates(long_data):
+    dates = forecast_dates(forward_realized_variance(long_data["log_return"]), burn_in=100)
+    with pytest.raises(ValueError, match="No training dates"):
+        walk_forward_folds(long_data.index, dates, start="2000-01-01")
+
+
+def test_walk_forward_runs_the_baselines_end_to_end(wf, long_data):
+    _, folds = wf
+    for model in (EWMAModel(), GARCHModel()):
+        forecasts, fits = run_walk_forward(model, long_data, folds)
+        assert (forecasts > 0).all() and len(fits) == len(folds)
+
+
+def test_garch_is_refitted_every_fold(wf, long_data):
+    """Each fold re-estimates on a longer history, so estimates differ between folds."""
+    _, folds = wf
+    _, fits = run_walk_forward(GARCHModel(), long_data, folds)
+    alphas = [fit["fit"]["alpha"] for fit in fits]
+    assert len(set(alphas)) == len(alphas)

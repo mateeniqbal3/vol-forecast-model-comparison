@@ -1,0 +1,1285 @@
+{
+  "purpose": "Phase 4: all three models under the naive random split (contrast only) and under walk-forward validation (the reported scheme). The comparison, significance tests and verdict are Phase 5 (docs/results_comparison.md).",
+  "generated_by": "python -m src.evaluate validate",
+  "processed_file_sha256": "a1cd29a69fc396ac92a4456807747cc33a438cc5c020e122c3df4668c0c9ba05",
+  "phase2_naive_baselines_reproduced": true,
+  "naive_random_split": {
+    "test_dates": {
+      "first": "1994-02-03",
+      "last": "2025-12-22",
+      "n": 1606
+    },
+    "estimation_data_end": "2025-12-31",
+    "models": {
+      "EWMA": {
+        "qlike": -6.625695157428983,
+        "rmse": 0.0014896941871846096,
+        "n": 1606,
+        "parameters": {
+          "lambda": 0.94,
+          "init_window": 30,
+          "estimated_parameters": 0
+        }
+      },
+      "GARCH(1,1)": {
+        "qlike": -6.667123177531034,
+        "rmse": 0.0014031927809030217,
+        "n": 1606,
+        "parameters": {
+          "omega": 2.131907279888647e-06,
+          "alpha": 0.11077302849265694,
+          "beta": 0.8729644760151244,
+          "persistence": 0.9837375045077813,
+          "unconditional_annualized_vol": 0.1817568687022918,
+          "estimated_parameters": 3
+        }
+      },
+      "LightGBM": {
+        "qlike": -6.741327794139588,
+        "rmse": 0.0013278239363600647,
+        "n": 1606,
+        "parameters": {
+          "best_params": {
+            "num_leaves": 7,
+            "min_child_samples": 50,
+            "reg_lambda": 10.0
+          },
+          "n_trees": 157,
+          "n_train": 6424,
+          "n_inner_train": 5139,
+          "n_inner_validation": 1281,
+          "grid_points": 12
+        }
+      }
+    }
+  },
+  "walk_forward": {
+    "scheme": "expanding window, refit each calendar year, 5-row purge (ADR-003)",
+    "n_folds": 26,
+    "test_dates": {
+      "first": "2000-01-03",
+      "last": "2025-12-23",
+      "n": 6534
+    },
+    "models": {
+      "EWMA": {
+        "qlike": -6.588670978036419,
+        "rmse": 0.001507532222260394,
+        "n": 6534,
+        "folds": [
+          {
+            "test_start": "2000-01-03",
+            "test_end": "2000-12-29",
+            "n_train": 1492,
+            "n_test": 252,
+            "information_set_end": "2000-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2001-01-02",
+            "test_end": "2001-12-31",
+            "n_train": 1744,
+            "n_test": 248,
+            "information_set_end": "2001-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2002-01-02",
+            "test_end": "2002-12-31",
+            "n_train": 1992,
+            "n_test": 252,
+            "information_set_end": "2002-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2003-01-02",
+            "test_end": "2003-12-31",
+            "n_train": 2244,
+            "n_test": 252,
+            "information_set_end": "2003-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2004-01-02",
+            "test_end": "2004-12-31",
+            "n_train": 2496,
+            "n_test": 252,
+            "information_set_end": "2004-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2005-01-03",
+            "test_end": "2005-12-30",
+            "n_train": 2748,
+            "n_test": 252,
+            "information_set_end": "2005-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2006-01-03",
+            "test_end": "2006-12-29",
+            "n_train": 3000,
+            "n_test": 251,
+            "information_set_end": "2006-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2007-01-03",
+            "test_end": "2007-12-31",
+            "n_train": 3251,
+            "n_test": 251,
+            "information_set_end": "2007-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2008-01-02",
+            "test_end": "2008-12-31",
+            "n_train": 3502,
+            "n_test": 253,
+            "information_set_end": "2008-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2009-01-02",
+            "test_end": "2009-12-31",
+            "n_train": 3755,
+            "n_test": 252,
+            "information_set_end": "2009-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2010-01-04",
+            "test_end": "2010-12-31",
+            "n_train": 4007,
+            "n_test": 252,
+            "information_set_end": "2010-01-04",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2011-01-03",
+            "test_end": "2011-12-30",
+            "n_train": 4259,
+            "n_test": 252,
+            "information_set_end": "2011-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2012-01-03",
+            "test_end": "2012-12-31",
+            "n_train": 4511,
+            "n_test": 250,
+            "information_set_end": "2012-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2013-01-02",
+            "test_end": "2013-12-31",
+            "n_train": 4761,
+            "n_test": 252,
+            "information_set_end": "2013-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2014-01-02",
+            "test_end": "2014-12-31",
+            "n_train": 5013,
+            "n_test": 252,
+            "information_set_end": "2014-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2015-01-02",
+            "test_end": "2015-12-31",
+            "n_train": 5265,
+            "n_test": 252,
+            "information_set_end": "2015-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2016-01-04",
+            "test_end": "2016-12-30",
+            "n_train": 5517,
+            "n_test": 252,
+            "information_set_end": "2016-01-04",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2017-01-03",
+            "test_end": "2017-12-29",
+            "n_train": 5769,
+            "n_test": 251,
+            "information_set_end": "2017-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2018-01-02",
+            "test_end": "2018-12-31",
+            "n_train": 6020,
+            "n_test": 251,
+            "information_set_end": "2018-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2019-01-02",
+            "test_end": "2019-12-31",
+            "n_train": 6271,
+            "n_test": 252,
+            "information_set_end": "2019-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2020-01-02",
+            "test_end": "2020-12-31",
+            "n_train": 6523,
+            "n_test": 253,
+            "information_set_end": "2020-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2021-01-04",
+            "test_end": "2021-12-31",
+            "n_train": 6776,
+            "n_test": 252,
+            "information_set_end": "2021-01-04",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2022-01-03",
+            "test_end": "2022-12-30",
+            "n_train": 7028,
+            "n_test": 251,
+            "information_set_end": "2022-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2023-01-03",
+            "test_end": "2023-12-29",
+            "n_train": 7279,
+            "n_test": 250,
+            "information_set_end": "2023-01-03",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2024-01-02",
+            "test_end": "2024-12-31",
+            "n_train": 7529,
+            "n_test": 252,
+            "information_set_end": "2024-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          },
+          {
+            "test_start": "2025-01-02",
+            "test_end": "2025-12-23",
+            "n_train": 7781,
+            "n_test": 245,
+            "information_set_end": "2025-01-02",
+            "fit": {
+              "lambda": 0.94,
+              "init_window": 30,
+              "estimated_parameters": 0
+            }
+          }
+        ]
+      },
+      "GARCH(1,1)": {
+        "qlike": -6.632714107082185,
+        "rmse": 0.001442595534267892,
+        "n": 6534,
+        "folds": [
+          {
+            "test_start": "2000-01-03",
+            "test_end": "2000-12-29",
+            "n_train": 1492,
+            "n_test": 252,
+            "information_set_end": "2000-01-03",
+            "fit": {
+              "omega": 5.822611149760283e-07,
+              "alpha": 0.05918732002135235,
+              "beta": 0.9362394072046925,
+              "persistence": 0.9954267272260449,
+              "unconditional_annualized_vol": 0.17912063135560188,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2001-01-02",
+            "test_end": "2001-12-31",
+            "n_train": 1744,
+            "n_test": 248,
+            "information_set_end": "2001-01-02",
+            "fit": {
+              "omega": 5.461689258294837e-07,
+              "alpha": 0.063470648695507,
+              "beta": 0.9348987525922919,
+              "persistence": 0.9983694012877989,
+              "unconditional_annualized_vol": 0.2905294865653819,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2002-01-02",
+            "test_end": "2002-12-31",
+            "n_train": 1992,
+            "n_test": 252,
+            "information_set_end": "2002-01-02",
+            "fit": {
+              "omega": 7.289529894633094e-07,
+              "alpha": 0.07221228613669164,
+              "beta": 0.9249456074777151,
+              "persistence": 0.9971578936144068,
+              "unconditional_annualized_vol": 0.25423179621464104,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2003-01-02",
+            "test_end": "2003-12-31",
+            "n_train": 2244,
+            "n_test": 252,
+            "information_set_end": "2003-01-02",
+            "fit": {
+              "omega": 7.076736683148034e-07,
+              "alpha": 0.07272624456536385,
+              "beta": 0.9255970626720038,
+              "persistence": 0.9983233072373676,
+              "unconditional_annualized_vol": 0.3261294692572234,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2004-01-02",
+            "test_end": "2004-12-31",
+            "n_train": 2496,
+            "n_test": 252,
+            "information_set_end": "2004-01-02",
+            "fit": {
+              "omega": 6.791799074206929e-07,
+              "alpha": 0.06880623236710069,
+              "beta": 0.928474783679011,
+              "persistence": 0.9972810160461117,
+              "unconditional_annualized_vol": 0.2508934727275637,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2005-01-03",
+            "test_end": "2005-12-30",
+            "n_train": 2748,
+            "n_test": 252,
+            "information_set_end": "2005-01-03",
+            "fit": {
+              "omega": 6.254445857525827e-07,
+              "alpha": 0.06576511090833474,
+              "beta": 0.9311162584357939,
+              "persistence": 0.9968813693441286,
+              "unconditional_annualized_vol": 0.22480849449841023,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2006-01-03",
+            "test_end": "2006-12-29",
+            "n_train": 3000,
+            "n_test": 251,
+            "information_set_end": "2006-01-03",
+            "fit": {
+              "omega": 6.539447513969089e-07,
+              "alpha": 0.06570894251125547,
+              "beta": 0.9303815003426367,
+              "persistence": 0.9960904428538921,
+              "unconditional_annualized_vol": 0.2053085410319564,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2007-01-03",
+            "test_end": "2007-12-31",
+            "n_train": 3251,
+            "n_test": 251,
+            "information_set_end": "2007-01-03",
+            "fit": {
+              "omega": 5.789524611225134e-07,
+              "alpha": 0.063800833654297,
+              "beta": 0.9323271779464589,
+              "persistence": 0.9961280116007559,
+              "unconditional_annualized_vol": 0.19411303453159634,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2008-01-02",
+            "test_end": "2008-12-31",
+            "n_train": 3502,
+            "n_test": 253,
+            "information_set_end": "2008-01-02",
+            "fit": {
+              "omega": 8.471166930483797e-07,
+              "alpha": 0.06411528917755625,
+              "beta": 0.92926769370051,
+              "persistence": 0.9933829828780663,
+              "unconditional_annualized_vol": 0.1796142384026475,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2009-01-02",
+            "test_end": "2009-12-31",
+            "n_train": 3755,
+            "n_test": 252,
+            "information_set_end": "2009-01-02",
+            "fit": {
+              "omega": 9.251334585874226e-07,
+              "alpha": 0.07327111220969784,
+              "beta": 0.9215000812844408,
+              "persistence": 0.9947711934941387,
+              "unconditional_annualized_vol": 0.21115490728140643,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2010-01-04",
+            "test_end": "2010-12-31",
+            "n_train": 4007,
+            "n_test": 252,
+            "information_set_end": "2010-01-04",
+            "fit": {
+              "omega": 9.081261466199308e-07,
+              "alpha": 0.07073634541716474,
+              "beta": 0.9236250410878754,
+              "persistence": 0.9943613865050401,
+              "unconditional_annualized_vol": 0.2014592427504282,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2011-01-03",
+            "test_end": "2011-12-30",
+            "n_train": 4259,
+            "n_test": 252,
+            "information_set_end": "2011-01-03",
+            "fit": {
+              "omega": 1.018954534786232e-06,
+              "alpha": 0.07519126150730115,
+              "beta": 0.9184558067444928,
+              "persistence": 0.9936470682517939,
+              "unconditional_annualized_vol": 0.20104375111955408,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2012-01-03",
+            "test_end": "2012-12-31",
+            "n_train": 4511,
+            "n_test": 250,
+            "information_set_end": "2012-01-03",
+            "fit": {
+              "omega": 1.1231754264783594e-06,
+              "alpha": 0.07977308329336893,
+              "beta": 0.9138451791774795,
+              "persistence": 0.9936182624708485,
+              "unconditional_annualized_vol": 0.21059817228816172,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2013-01-02",
+            "test_end": "2013-12-31",
+            "n_train": 4761,
+            "n_test": 252,
+            "information_set_end": "2013-01-02",
+            "fit": {
+              "omega": 1.2361321582594444e-06,
+              "alpha": 0.08183442004802408,
+              "beta": 0.9104798403478851,
+              "persistence": 0.9923142603959092,
+              "unconditional_annualized_vol": 0.20132137580900536,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2014-01-02",
+            "test_end": "2014-12-31",
+            "n_train": 5013,
+            "n_test": 252,
+            "information_set_end": "2014-01-02",
+            "fit": {
+              "omega": 1.257916911068705e-06,
+              "alpha": 0.08163957362760686,
+              "beta": 0.9097367506100008,
+              "persistence": 0.9913763242376077,
+              "unconditional_annualized_vol": 0.19172557043247257,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2015-01-02",
+            "test_end": "2015-12-31",
+            "n_train": 5265,
+            "n_test": 252,
+            "information_set_end": "2015-01-02",
+            "fit": {
+              "omega": 1.342933006022679e-06,
+              "alpha": 0.08533176496750194,
+              "beta": 0.9051194572839238,
+              "persistence": 0.9904512222514258,
+              "unconditional_annualized_vol": 0.18825804821210254,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2016-01-04",
+            "test_end": "2016-12-30",
+            "n_train": 5517,
+            "n_test": 252,
+            "information_set_end": "2016-01-04",
+            "fit": {
+              "omega": 1.4668580473423847e-06,
+              "alpha": 0.08874193898144589,
+              "beta": 0.9006950614302422,
+              "persistence": 0.9894370004116881,
+              "unconditional_annualized_vol": 0.187068508166964,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2017-01-03",
+            "test_end": "2017-12-29",
+            "n_train": 5769,
+            "n_test": 251,
+            "information_set_end": "2017-01-03",
+            "fit": {
+              "omega": 1.6976307264888656e-06,
+              "alpha": 0.09270142241607729,
+              "beta": 0.8940960072885031,
+              "persistence": 0.9867974297045804,
+              "unconditional_annualized_vol": 0.1800083452992762,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2018-01-02",
+            "test_end": "2018-12-31",
+            "n_train": 6020,
+            "n_test": 251,
+            "information_set_end": "2018-01-02",
+            "fit": {
+              "omega": 1.3452926259174734e-06,
+              "alpha": 0.08906495319289222,
+              "beta": 0.9004348211616826,
+              "persistence": 0.9894997743545748,
+              "unconditional_annualized_vol": 0.17968397031315209,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2019-01-02",
+            "test_end": "2019-12-31",
+            "n_train": 6271,
+            "n_test": 252,
+            "information_set_end": "2019-01-02",
+            "fit": {
+              "omega": 1.5817079942374392e-06,
+              "alpha": 0.0961735593005132,
+              "beta": 0.8918552299997113,
+              "persistence": 0.9880287893002245,
+              "unconditional_annualized_vol": 0.18247122509060754,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2020-01-02",
+            "test_end": "2020-12-31",
+            "n_train": 6523,
+            "n_test": 253,
+            "information_set_end": "2020-01-02",
+            "fit": {
+              "omega": 1.758569937722178e-06,
+              "alpha": 0.1023302915344496,
+              "beta": 0.8837363310486585,
+              "persistence": 0.9860666225831081,
+              "unconditional_annualized_vol": 0.1783412852751401,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2021-01-04",
+            "test_end": "2021-12-31",
+            "n_train": 6776,
+            "n_test": 252,
+            "information_set_end": "2021-01-04",
+            "fit": {
+              "omega": 1.9702303162738653e-06,
+              "alpha": 0.1114098250079698,
+              "beta": 0.8742547382364844,
+              "persistence": 0.9856645632444542,
+              "unconditional_annualized_vol": 0.18610297020593805,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2022-01-03",
+            "test_end": "2022-12-30",
+            "n_train": 7028,
+            "n_test": 251,
+            "information_set_end": "2022-01-03",
+            "fit": {
+              "omega": 2.0601526428768503e-06,
+              "alpha": 0.11194861031172203,
+              "beta": 0.8724777748450863,
+              "persistence": 0.9844263851568082,
+              "unconditional_annualized_vol": 0.18258086293608872,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2023-01-03",
+            "test_end": "2023-12-29",
+            "n_train": 7279,
+            "n_test": 250,
+            "information_set_end": "2023-01-03",
+            "fit": {
+              "omega": 1.9607425578402154e-06,
+              "alpha": 0.11026499470010358,
+              "beta": 0.8759075336992911,
+              "persistence": 0.9861725283993946,
+              "unconditional_annualized_vol": 0.1890336719183392,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2024-01-02",
+            "test_end": "2024-12-31",
+            "n_train": 7529,
+            "n_test": 252,
+            "information_set_end": "2024-01-02",
+            "fit": {
+              "omega": 1.9375669992479474e-06,
+              "alpha": 0.10824186238892378,
+              "beta": 0.877494747255705,
+              "persistence": 0.9857366096446287,
+              "unconditional_annualized_vol": 0.18501939259450886,
+              "estimated_parameters": 3
+            }
+          },
+          {
+            "test_start": "2025-01-02",
+            "test_end": "2025-12-23",
+            "n_train": 7781,
+            "n_test": 245,
+            "information_set_end": "2025-01-02",
+            "fit": {
+              "omega": 1.9856597585223227e-06,
+              "alpha": 0.10696339894579761,
+              "beta": 0.8778641670325165,
+              "persistence": 0.9848275659783141,
+              "unconditional_annualized_vol": 0.18160385313470895,
+              "estimated_parameters": 3
+            }
+          }
+        ]
+      },
+      "LightGBM": {
+        "qlike": -6.645122747622035,
+        "rmse": 0.0015894252500631304,
+        "n": 6534,
+        "folds": [
+          {
+            "test_start": "2000-01-03",
+            "test_end": "2000-12-29",
+            "n_train": 1492,
+            "n_test": 252,
+            "information_set_end": "2000-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 36,
+              "n_train": 1492,
+              "n_inner_train": 1194,
+              "n_inner_validation": 294,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2001-01-02",
+            "test_end": "2001-12-31",
+            "n_train": 1744,
+            "n_test": 248,
+            "information_set_end": "2001-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 178,
+              "n_train": 1744,
+              "n_inner_train": 1395,
+              "n_inner_validation": 345,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2002-01-02",
+            "test_end": "2002-12-31",
+            "n_train": 1992,
+            "n_test": 252,
+            "information_set_end": "2002-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 155,
+              "n_train": 1992,
+              "n_inner_train": 1594,
+              "n_inner_validation": 394,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2003-01-02",
+            "test_end": "2003-12-31",
+            "n_train": 2244,
+            "n_test": 252,
+            "information_set_end": "2003-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 31,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 168,
+              "n_train": 2244,
+              "n_inner_train": 1795,
+              "n_inner_validation": 445,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2004-01-02",
+            "test_end": "2004-12-31",
+            "n_train": 2496,
+            "n_test": 252,
+            "information_set_end": "2004-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 260,
+              "n_train": 2496,
+              "n_inner_train": 1997,
+              "n_inner_validation": 495,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2005-01-03",
+            "test_end": "2005-12-30",
+            "n_train": 2748,
+            "n_test": 252,
+            "information_set_end": "2005-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 15,
+                "min_child_samples": 200,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 169,
+              "n_train": 2748,
+              "n_inner_train": 2198,
+              "n_inner_validation": 546,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2006-01-03",
+            "test_end": "2006-12-29",
+            "n_train": 3000,
+            "n_test": 251,
+            "information_set_end": "2006-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 15,
+                "min_child_samples": 200,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 148,
+              "n_train": 3000,
+              "n_inner_train": 2400,
+              "n_inner_validation": 596,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2007-01-03",
+            "test_end": "2007-12-31",
+            "n_train": 3251,
+            "n_test": 251,
+            "information_set_end": "2007-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 342,
+              "n_train": 3251,
+              "n_inner_train": 2601,
+              "n_inner_validation": 646,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2008-01-02",
+            "test_end": "2008-12-31",
+            "n_train": 3502,
+            "n_test": 253,
+            "information_set_end": "2008-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 31,
+                "min_child_samples": 50,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 83,
+              "n_train": 3502,
+              "n_inner_train": 2802,
+              "n_inner_validation": 696,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2009-01-02",
+            "test_end": "2009-12-31",
+            "n_train": 3755,
+            "n_test": 252,
+            "information_set_end": "2009-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 412,
+              "n_train": 3755,
+              "n_inner_train": 3004,
+              "n_inner_validation": 747,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2010-01-04",
+            "test_end": "2010-12-31",
+            "n_train": 4007,
+            "n_test": 252,
+            "information_set_end": "2010-01-04",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 401,
+              "n_train": 4007,
+              "n_inner_train": 3206,
+              "n_inner_validation": 797,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2011-01-03",
+            "test_end": "2011-12-30",
+            "n_train": 4259,
+            "n_test": 252,
+            "information_set_end": "2011-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 299,
+              "n_train": 4259,
+              "n_inner_train": 3407,
+              "n_inner_validation": 848,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2012-01-03",
+            "test_end": "2012-12-31",
+            "n_train": 4511,
+            "n_test": 250,
+            "information_set_end": "2012-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 327,
+              "n_train": 4511,
+              "n_inner_train": 3609,
+              "n_inner_validation": 898,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2013-01-02",
+            "test_end": "2013-12-31",
+            "n_train": 4761,
+            "n_test": 252,
+            "information_set_end": "2013-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 97,
+              "n_train": 4761,
+              "n_inner_train": 3809,
+              "n_inner_validation": 948,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2014-01-02",
+            "test_end": "2014-12-31",
+            "n_train": 5013,
+            "n_test": 252,
+            "information_set_end": "2014-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 77,
+              "n_train": 5013,
+              "n_inner_train": 4010,
+              "n_inner_validation": 999,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2015-01-02",
+            "test_end": "2015-12-31",
+            "n_train": 5265,
+            "n_test": 252,
+            "information_set_end": "2015-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 10.0
+              },
+              "n_trees": 111,
+              "n_train": 5265,
+              "n_inner_train": 4212,
+              "n_inner_validation": 1049,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2016-01-04",
+            "test_end": "2016-12-30",
+            "n_train": 5517,
+            "n_test": 252,
+            "information_set_end": "2016-01-04",
+            "fit": {
+              "best_params": {
+                "num_leaves": 15,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 54,
+              "n_train": 5517,
+              "n_inner_train": 4414,
+              "n_inner_validation": 1099,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2017-01-03",
+            "test_end": "2017-12-29",
+            "n_train": 5769,
+            "n_test": 251,
+            "information_set_end": "2017-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 15,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 70,
+              "n_train": 5769,
+              "n_inner_train": 4615,
+              "n_inner_validation": 1150,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2018-01-02",
+            "test_end": "2018-12-31",
+            "n_train": 6020,
+            "n_test": 251,
+            "information_set_end": "2018-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 15,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 131,
+              "n_train": 6020,
+              "n_inner_train": 4816,
+              "n_inner_validation": 1200,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2019-01-02",
+            "test_end": "2019-12-31",
+            "n_train": 6271,
+            "n_test": 252,
+            "information_set_end": "2019-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 131,
+              "n_train": 6271,
+              "n_inner_train": 5017,
+              "n_inner_validation": 1250,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2020-01-02",
+            "test_end": "2020-12-31",
+            "n_train": 6523,
+            "n_test": 253,
+            "information_set_end": "2020-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 132,
+              "n_train": 6523,
+              "n_inner_train": 5218,
+              "n_inner_validation": 1301,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2021-01-04",
+            "test_end": "2021-12-31",
+            "n_train": 6776,
+            "n_test": 252,
+            "information_set_end": "2021-01-04",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 132,
+              "n_train": 6776,
+              "n_inner_train": 5421,
+              "n_inner_validation": 1351,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2022-01-03",
+            "test_end": "2022-12-30",
+            "n_train": 7028,
+            "n_test": 251,
+            "information_set_end": "2022-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 133,
+              "n_train": 7028,
+              "n_inner_train": 5622,
+              "n_inner_validation": 1402,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2023-01-03",
+            "test_end": "2023-12-29",
+            "n_train": 7279,
+            "n_test": 250,
+            "information_set_end": "2023-01-03",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 148,
+              "n_train": 7279,
+              "n_inner_train": 5823,
+              "n_inner_validation": 1452,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2024-01-02",
+            "test_end": "2024-12-31",
+            "n_train": 7529,
+            "n_test": 252,
+            "information_set_end": "2024-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 200,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 128,
+              "n_train": 7529,
+              "n_inner_train": 6023,
+              "n_inner_validation": 1502,
+              "grid_points": 12
+            }
+          },
+          {
+            "test_start": "2025-01-02",
+            "test_end": "2025-12-23",
+            "n_train": 7781,
+            "n_test": 245,
+            "information_set_end": "2025-01-02",
+            "fit": {
+              "best_params": {
+                "num_leaves": 7,
+                "min_child_samples": 50,
+                "reg_lambda": 0.0
+              },
+              "n_trees": 163,
+              "n_train": 7781,
+              "n_inner_train": 6225,
+              "n_inner_validation": 1552,
+              "grid_points": 12
+            }
+          }
+        ]
+      }
+    }
+  },
+  "forecasts_file": "data/processed/forecasts.csv"
+}

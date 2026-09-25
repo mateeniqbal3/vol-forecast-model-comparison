@@ -19,7 +19,11 @@ seed and split 80/20. Test dates are interleaved with training dates, so a
 training target overlaps the returns of neighbouring test targets. This is
 kept only as the contrast in PROJECT.md section 9, never as the result.
 
-Walk-forward: TODO (TASKS.md Phase 4).
+Walk-forward (the reported scheme, ADR-003): expanding window, one fold per
+calendar year from 2000. The fold whose first test date is ``T0`` trains on
+eligible dates at least ``h`` rows before ``T0`` (purged), so its
+information set ends at ``T0``. Parameters are then held fixed while the
+model forecasts every date of that year from data up to each date.
 """
 
 from __future__ import annotations
@@ -38,6 +42,7 @@ from src.target import HORIZON
 BURN_IN = 252
 NAIVE_TEST_FRACTION = 0.2
 NAIVE_SEED = 0
+WALK_FORWARD_START = "2000-01-01"
 
 
 class Model(Protocol):
@@ -91,3 +96,56 @@ def run_split(model: Model, data: pd.DataFrame, split: Split, horizon: int = HOR
     if forecasts.isna().any() or (forecasts <= 0).any():
         raise ValueError(f"{model.name} produced missing or non-positive forecasts on test dates.")
     return forecasts
+
+
+def walk_forward_folds(
+    index: pd.DatetimeIndex,
+    dates: pd.DatetimeIndex,
+    start: str = WALK_FORWARD_START,
+    horizon: int = HORIZON,
+) -> list[Split]:
+    """
+    Expanding-window folds with one calendar-year test block each.
+
+    ``index`` is the full data index (row positions define the purge);
+    ``dates`` are the eligible forecast dates.
+    """
+    positions = index.get_indexer(dates)
+    if (positions < 0).any():
+        raise ValueError("Every forecast date must be in the data index.")
+    test_dates = dates[dates >= pd.Timestamp(start)]
+    folds = []
+    for year in sorted(set(test_dates.year)):
+        test = test_dates[test_dates.year == year]
+        cutoff = index.get_loc(test[0]) - horizon
+        train = dates[positions <= cutoff]
+        if len(train) == 0:
+            raise ValueError(f"No training dates before the {year} test block.")
+        folds.append(Split(train=pd.DatetimeIndex(train), test=pd.DatetimeIndex(test)))
+    return folds
+
+
+def run_walk_forward(
+    model: Model, data: pd.DataFrame, folds: list[Split], horizon: int = HORIZON
+) -> tuple[pd.Series, list[dict]]:
+    """Refit ``model`` at the start of each fold; return all test forecasts and per-fold fit info."""
+    pieces, fits = [], []
+    for fold in folds:
+        info_end = information_set_end(data.index, fold.train, horizon)
+        if info_end > fold.test[0]:
+            raise ValueError(f"Fold starting {fold.test[0].date()} would see data after its origin.")
+        pieces.append(run_split(model, data, fold, horizon))
+        describe = getattr(model, "describe", dict)
+        fits.append(
+            {
+                "test_start": fold.test[0].strftime("%Y-%m-%d"),
+                "test_end": fold.test[-1].strftime("%Y-%m-%d"),
+                "n_train": len(fold.train),
+                "n_test": len(fold.test),
+                "information_set_end": info_end.strftime("%Y-%m-%d"),
+                "fit": describe(),
+            }
+        )
+    forecasts = pd.concat(pieces)
+    forecasts.name = model.name
+    return forecasts, fits

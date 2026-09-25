@@ -6,8 +6,26 @@ All notable changes to this project are documented here. Loosely follows
 ## [Unreleased]
 
 ### Planned
-- Walk-forward validation harness (plus naive-split mode for comparison)
 - Naive-vs-walk-forward, simple-vs-complex comparison and verdict
+
+---
+
+## [0.5.0] — 2026-09-25 — Walk-forward validation
+
+### Added
+- `src/validation.py`: walk-forward folds (expanding window, one calendar
+  year per test block from 2000, 5-row purge) and a runner that refits
+  each fold and refuses any fold whose information set passes its origin
+- `src/evaluate.py`: `validate` command, which scores EWMA, GARCH(1,1) and
+  LightGBM under both the naive random split and walk-forward, checks that
+  the Phase 2 baseline record reproduces exactly, and writes
+  `docs/phase4_validation_results.json` plus per-date forecasts
+  (`data/processed/forecasts.csv`, not tracked)
+- Walk-forward tests: one fold per year, test blocks partition the test
+  period, no test date precedes or overlaps its training window, purge of
+  unobserved targets, information set ends at the fold origin, expanding
+  window, leaking folds rejected
+- ADR-003: walk-forward design, fixed before the first run
 
 ---
 

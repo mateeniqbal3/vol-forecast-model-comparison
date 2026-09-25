@@ -16,4 +16,7 @@ echo "== Phase 1: data =="
 echo "== Phase 2: simple baselines, naive random split (recorded, then set aside) =="
 "$PYTHON" -m src.evaluate naive-baselines
 
+echo "== Phases 3-4: all models, naive split and walk-forward validation =="
+"$PYTHON" -m src.evaluate validate
+
 echo "Later stages are not implemented yet (see TASKS.md)."
