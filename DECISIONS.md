@@ -166,8 +166,7 @@ Why:
 
 ## ADR-004: Complex model feature set and configuration count
 
-**Status:** Accepted (Phase 3). The configuration log below stays open
-until Phase 5.
+**Status:** Accepted (Phase 3; configuration log closed in Phase 5).
 
 **Context:** `PROJECT.md` §2 requires the complex model be given a
 genuinely fair chance, and `PROJECT.md` §12 requires disclosing how many
@@ -252,7 +251,18 @@ the selected grid point varies by fold, and GARCH persistence drifts
 smoothly from 0.995 to 0.985. No bug was found. Scores are in
 `docs/phase4_validation_results.json`.
 
+**Final configuration count: 1.** Configuration #1 was the only ML design
+built, run or scored. The Phase 5 analysis refitted it once more (the 2008
+fold, `lightgbm_ceiling_probe`) and reproduced the Phase 4 forecasts
+exactly. That refit was a diagnostic, not a new configuration. No other
+feature set, objective, grid or procedure was tried.
+
 **Consequences:**
+- With one configuration, researcher-level selection cannot have made the
+  ML result optimistic. The automated 12-point inner grid is part of the
+  training procedure, runs identically in every fold, and uses only
+  training dates. The verdict went against the ML model, so any residual
+  selection bias would only have worked in its favor.
 - The ML model has more information than the baselines, not just more
   flexibility: intraday range, open and volume. Any advantage it shows
   cannot be attributed to model complexity alone. Phase 5 must say so.
@@ -267,21 +277,95 @@ smoothly from 0.995 to 0.985. No bug was found. Scores are in
 
 ## ADR-005: The verdict — was the added complexity justified?
 
-**Status:** Proposed — resolves at the end of Phase 5
+**Status:** Accepted (Phase 5). The test design and decision rule below were fixed
+on 2026-09-25, before any significance test was computed. At that point the
+Phase 4 point estimates (`docs/phase4_validation_results.json`) had been
+seen, but no p-value had.
 
 **Context:** This is the project's central deliverable — see `PROJECT.md`
 §2 and §9.
 
-**Decision:** _Fill in the actual finding, stated precisely: e.g. "Under
-walk-forward validation, GARCH(1,1) achieved a QLIKE of X vs. the
-gradient-boosting model's Y — the simple model won by Z%. Under the naive
-random-split validation, the complex model had appeared to win by W%,
-which walk-forward validation revealed was an artifact of leakage." (Or
-whichever pattern was actually found — report it precisely.)_
+**Pre-registered test design and decision rule:**
+- **Primary comparison:** LightGBM vs GARCH(1,1), walk-forward, QLIKE, all
+  6,534 test dates. GARCH(1,1) is the comparator because it is the
+  estimated simple model (ADR-007). On the Phase 4 point estimates it is
+  also the stronger baseline, so this is the harder benchmark for the ML
+  model, not the easier one. The comparisons against EWMA and GARCH vs
+  EWMA are also reported.
+- **Test:** Diebold–Mariano on the per-date loss differential
+  `d_t = L(LightGBM) - L(GARCH)`. Its variance uses Newey–West (Bartlett)
+  HAC with lag `max(h-1, floor(4 (n/100)^(2/9)))`, which is 10 for
+  n = 6,534. The p-value is two-sided, from the normal distribution.
+  Sensitivity: lag 63 (about one quarter), because losses driven by
+  volatility regimes may stay correlated well beyond the rule of thumb.
+- **Verdict categories (QLIKE):**
+  - *Justified:* mean `d_t < 0` with p < 0.05 at the primary lag and at
+    lag 63.
+  - *Weak evidence:* mean `d_t < 0` with p < 0.05 at the primary lag
+    only.
+  - *Not justified:* anything else, i.e. no statistically supported
+    improvement.
+- **MSE is secondary.** If QLIKE and MSE disagree, the verdict states both.
+  It does not pick one. QLIKE remains the primary metric fixed in ADR-002.
+- **Naive-vs-walk-forward effect:** the naive forecasts are rescored on
+  the naive test dates from 2000-01-03 on, and compared with each model's
+  walk-forward forecasts on those same dates. That separates the effect of
+  the validation scheme from the effect of the sample period (ADR-003).
 
-**Consequences:** _Fill in — what does this suggest about when added
-model complexity is/isn't worth it for this kind of forecasting task? This
-is the actual interview-ready insight this project produces._
+**Decision (verdict, 2026-09-25): not justified.** The full analysis is in
+`docs/results_comparison.md`, and the numbers are in
+`docs/phase5_comparison.json`.
+
+Under walk-forward validation (26 annual folds, 6,534 forecast dates,
+2000–2025), LightGBM's mean QLIKE is −6.6451 against −6.6327 for
+GARCH(1,1). That is a 0.0124 advantage with DM p = 0.47 (lag 10) and
+p = 0.65 (lag 63); the 95% CI is −0.046 to +0.022. LightGBM's RMSE is
+worse, 1.589e-3 against 1.443e-3, though not significantly (p = 0.18).
+
+Under the naive random split, the same model appeared to beat GARCH
+decisively: by 0.074 QLIKE (p < 0.0001) and on MSE (p = 0.016). On
+identical dates, the naive split overstated LightGBM's QLIKE by 0.065
+(p = 0.004) and GARCH's by 0.008. EWMA's naive and walk-forward forecasts
+are identical.
+
+Mechanism:
+- A tree ensemble's forecast saturates outside its training range. The
+  2008-fold model cannot forecast above 0.00222 (about 33% annualized) for
+  any input. Scaling its variance features by 100 does not change its
+  forecast, and 2008 realized up to 0.0352 (about 133%). GARCH's forecast
+  is linear in the latest squared return and rose to 0.0138.
+- 2008 alone moves the mean QLIKE difference by +0.027, more than twice
+  LightGBM's net advantage.
+- The naive split concealed this by training on weeks from the very
+  crises it tested, and by letting the model learn from neighboring
+  targets that share returns with each test target.
+
+The QLIKE/RMSE disagreement has the same cause. The top 1% of weeks carry
+83% of LightGBM's squared error, and its mean forecast is 0.79 of mean
+realized variance, against 1.00 for GARCH. QLIKE, a relative loss, is
+dominated by the ordinary weeks where LightGBM is slightly better (21 of
+26 years).
+
+**Consequences:**
+- For daily volatility forecasting of a broad index, the flexibility of a
+  boosted-tree model buys a small, consistent gain in ordinary conditions.
+  It pays for that with an inability to extrapolate, and that failure lands
+  in exactly the weeks when a volatility forecast matters most.
+  GARCH(1,1)'s parametric form (variance linear in the latest shock,
+  mean-reverting) extrapolates by construction. Its three parameters were
+  worth adding over EWMA: 0.044 QLIKE, p ≤ 0.0002 at both lags. The step
+  from GARCH to ML was not.
+- The naive split turned "no detectable improvement" into "highly
+  significant improvement on both metrics". Its bias grows with how much a
+  model learns from individual target rows: zero for EWMA, 0.008 QLIKE for
+  GARCH, 0.065 for LightGBM.
+- This is an absence of evidence for improvement, not evidence that the
+  models are equal. The confidence interval admits a LightGBM advantage of
+  up to about 0.046 QLIKE.
+- Designs that might fix the ceiling were not tried: linear-leaf trees, or
+  modeling RV relative to a GARCH forecast. Trying them after seeing these
+  results would have been the post-hoc redesign this project forbids. They
+  are untested hypotheses for a separate, pre-registered study.
 
 ---
 

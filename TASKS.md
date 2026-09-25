@@ -66,19 +66,19 @@ baseline (Phase 2) must be built and its results recorded first.
 - [x] `tests/test_validation.py`: specifically tests that the walk-forward
       split logic never lets a test-window timestamp precede or overlap
       its corresponding training window
-- [ ] Commit: "feat: walk-forward validation applied to all models"
+- [x] Commit: "feat: walk-forward validation applied to all models"
 
 ## Phase 5 — Comparison & Evaluation
 
-- [ ] Write `src/evaluate.py`: QLIKE and/or RMSE computation, generates
+- [x] Write `src/evaluate.py`: QLIKE and/or RMSE computation, generates
       the naive-vs-walk-forward comparison table for both models (per
       `PROJECT.md` §9)
-- [ ] Generate `docs/results_comparison.md` with the full table and a
+- [x] Generate `docs/results_comparison.md` with the full table and a
       SPECIFIC mechanistic discussion of any differences found — not a
       vague "validation matters" statement
-- [ ] State the plain verdict: was the complex model's added complexity
+- [x] State the plain verdict: was the complex model's added complexity
       justified out-of-sample, under proper validation?
-- [ ] If multiple feature sets/hyperparameter configurations were tried
+- [x] If multiple feature sets/hyperparameter configurations were tried
       for the complex model, log and disclose the count in `DECISIONS.md`
 - [ ] Commit: "feat: full model comparison complete — see docs/results_comparison.md"
 

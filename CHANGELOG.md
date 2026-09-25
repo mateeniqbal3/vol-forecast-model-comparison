@@ -6,7 +6,25 @@ All notable changes to this project are documented here. Loosely follows
 ## [Unreleased]
 
 ### Planned
-- Naive-vs-walk-forward, simple-vs-complex comparison and verdict
+- CI workflow, README and final documentation (Phases 6-7)
+
+---
+
+## [0.6.0] — 2026-09-25 — Comparison and verdict
+
+### Added
+- `src/evaluate.py`: Diebold–Mariano test with Newey–West (Bartlett) HAC
+  errors and 95% intervals; `compare` command writing
+  `docs/phase5_comparison.json`, with the naive-vs-walk-forward table on
+  all and identical dates, DM tests for every model pair, metric and lag,
+  per-year results, the extrapolation and error-concentration
+  diagnostics, and the LightGBM ceiling probe
+- `docs/results_comparison.md`: comparison table, why the naive split
+  misled, why QLIKE and RMSE disagree, the verdict and limitations
+- Tests for the Newey–West variance (against `statsmodels`), the DM
+  statistic, p-value and interval, and the yearly decomposition
+- ADR-005: pre-registered test design and the verdict (not justified);
+  ADR-004 configuration log closed at one configuration
 
 ---
 
