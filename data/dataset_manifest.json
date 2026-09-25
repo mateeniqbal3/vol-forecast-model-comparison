@@ -1,0 +1,34 @@
+{
+  "source": "yfinance",
+  "yfinance_version": "1.7.0",
+  "instrument": "SPY",
+  "instrument_description": "SPDR S&P 500 ETF Trust (NYSE Arca)",
+  "frequency": "daily (close-to-close)",
+  "price_adjustment": "auto_adjust=True: OHLC adjusted for splits and dividends",
+  "requested_date_range": {
+    "start": "1993-01-29",
+    "end_inclusive": "2025-12-31"
+  },
+  "date_range": {
+    "first_return": "1993-02-01",
+    "last_return": "2025-12-31"
+  },
+  "n_return_rows": 8287,
+  "cleaning": {
+    "rows_in": 8288,
+    "duplicate_dates_dropped": 0,
+    "missing_close_dropped": 0,
+    "rows_out": 8288
+  },
+  "retrieved_at_utc": "2026-09-25T14:56:42Z",
+  "log_return_checks": {
+    "sum": 3.336849929,
+    "sum_of_squares": 1.144057576
+  },
+  "processed_file_sha256": "a1cd29a69fc396ac92a4456807747cc33a438cc5c020e122c3df4668c0c9ba05",
+  "files": {
+    "raw": "data/raw/SPY_daily_raw.csv",
+    "processed": "data/processed/SPY_daily.csv"
+  },
+  "rationale": "See DECISIONS.md ADR-001."
+}

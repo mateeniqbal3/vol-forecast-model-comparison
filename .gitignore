@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+.env
+*.env.local
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# Local development-tool configuration (not part of the research artifact)
+CLAUDE.md
+.claude/
