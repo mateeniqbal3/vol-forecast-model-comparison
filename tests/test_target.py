@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src import baseline_ewma, baseline_garch
 from src.data import add_log_returns
 from src.target import HORIZON, forward_realized_variance
 from tests.lookahead import assert_no_lookahead, leaking_cut_dates
@@ -110,8 +111,15 @@ def test_rejects_bad_inputs():
 
 # Every transform that produces model inputs must be listed here. Phase 2/3
 # feature builders are added as they are written.
+_FIXED_GARCH = baseline_garch.GarchParams(omega=2e-6, alpha=0.08, beta=0.9)
+
 FEATURE_BUILDERS = {
     "log_returns": lambda prices: add_log_returns(prices)["log_return"],
+    "ewma_forecast": lambda prices: baseline_ewma.forecast(add_log_returns(prices)["log_return"]),
+    # Filtering only; estimation is confined to the information set by the harness.
+    "garch_forecast_fixed_params": lambda prices: baseline_garch.forecast(
+        add_log_returns(prices)["log_return"], _FIXED_GARCH
+    ),
 }
 
 

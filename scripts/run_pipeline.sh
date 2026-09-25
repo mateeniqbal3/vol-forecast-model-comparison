@@ -13,4 +13,7 @@ PYTHON="${PYTHON:-python}"
 echo "== Phase 1: data =="
 "$PYTHON" -m src.data "$@"
 
+echo "== Phase 2: simple baselines, naive random split (recorded, then set aside) =="
+"$PYTHON" -m src.evaluate naive-baselines
+
 echo "Later stages are not implemented yet (see TASKS.md)."

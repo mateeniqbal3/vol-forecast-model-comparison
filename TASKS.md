@@ -11,7 +11,7 @@ baseline (Phase 2) must be built and its results recorded first.
 - [x] `pyproject.toml`, `requirements.txt`
 - [x] `LICENSE` (MIT, mateeniqbal3, current year)
 - [x] Folder structure per `PROJECT.md` §11
-- [ ] Commit: "chore: initial project scaffold"
+- [x] Commit: "chore: initial project scaffold"
 
 ## Phase 1 — Data & Target
 
@@ -27,17 +27,17 @@ baseline (Phase 2) must be built and its results recorded first.
       returns strictly after T, and confirm no feature construction
       elsewhere accidentally uses the same forward window)
 - [x] Write `data/dataset_manifest.json`: instrument, date range, source
-- [ ] Commit: "feat: data pipeline and volatility target construction"
+- [x] Commit: "feat: data pipeline and volatility target construction"
 
 ## Phase 2 — Simple Baseline (build and record BEFORE the complex model)
 
-- [ ] Write `src/baseline_ewma.py`: EWMA volatility estimate
-- [ ] Write `src/baseline_garch.py`: GARCH(1,1) (or a documented
+- [x] Write `src/baseline_ewma.py`: EWMA volatility estimate
+- [x] Write `src/baseline_garch.py`: GARCH(1,1) (or a documented
       alternative order) via the `arch` package
-- [ ] Evaluate both under a NAIVE (random-split) validation first, purely
+- [x] Evaluate both under a NAIVE (random-split) validation first, purely
       to have that naive number on record for the Phase 5 comparison —
       then set it aside
-- [ ] `tests/test_baseline_ewma.py`, `tests/test_baseline_garch.py`
+- [x] `tests/test_baseline_ewma.py`, `tests/test_baseline_garch.py`
 - [ ] Commit: "feat: simple baselines (EWMA, GARCH) implemented and recorded"
 
 ## Phase 3 — Complex Model

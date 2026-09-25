@@ -1,0 +1,53 @@
+{
+  "purpose": "Phase 2 record of the simple baselines under the NAIVE random split, made before the complex model exists. Contrast only, not the project's result (PROJECT.md section 9, DECISIONS.md ADR-008).",
+  "generated_by": "python -m src.evaluate naive-baselines",
+  "processed_file_sha256": "a1cd29a69fc396ac92a4456807747cc33a438cc5c020e122c3df4668c0c9ba05",
+  "target": {
+    "name": "rv_fwd_5d",
+    "horizon_days": 5,
+    "units": "5-day variance"
+  },
+  "split": {
+    "scheme": "random split of forecast dates, time order ignored",
+    "test_fraction": 0.2,
+    "seed": 0,
+    "burn_in_rows": 252,
+    "eligible_dates": {
+      "first": "1994-01-28",
+      "last": "2025-12-23",
+      "n": 8030
+    },
+    "n_train": 6424,
+    "n_test": 1606,
+    "estimation_data_end": "2025-12-31"
+  },
+  "metrics": {
+    "qlike": "mean of log(F) + RV/F; lower is better",
+    "rmse": "root mean squared error of 5-day variance; lower is better"
+  },
+  "models": {
+    "EWMA": {
+      "qlike": -6.625695157428983,
+      "rmse": 0.0014896941871846096,
+      "n": 1606,
+      "parameters": {
+        "lambda": 0.94,
+        "init_window": 30,
+        "estimated_parameters": 0
+      }
+    },
+    "GARCH(1,1)": {
+      "qlike": -6.667123177531034,
+      "rmse": 0.0014031927809030217,
+      "n": 1606,
+      "parameters": {
+        "omega": 2.131907279888647e-06,
+        "alpha": 0.11077302849265694,
+        "beta": 0.8729644760151244,
+        "persistence": 0.9837375045077813,
+        "unconditional_annualized_vol": 0.1817568687022918,
+        "estimated_parameters": 3
+      }
+    }
+  }
+}

@@ -6,10 +6,29 @@ All notable changes to this project are documented here. Loosely follows
 ## [Unreleased]
 
 ### Planned
-- Simple baselines (EWMA, GARCH(1,1))
 - Complex ML model (gradient boosting / small neural network)
 - Walk-forward validation harness (plus naive-split mode for comparison)
 - Naive-vs-walk-forward, simple-vs-complex comparison and verdict
+
+---
+
+## [0.3.0] — 2026-09-25 — Simple baselines and naive-split record
+
+### Added
+- `src/baseline_ewma.py`: RiskMetrics EWMA (λ = 0.94, not estimated)
+- `src/baseline_garch.py`: zero-mean GARCH(1,1), Gaussian QML via `arch`,
+  analytic 5-day forecast; estimation separated from causal filtering
+- `src/validation.py`: model interface, shared information-set rule, and
+  the naive random split (walk-forward follows in Phase 4)
+- `src/evaluate.py`: QLIKE and MSE/RMSE on the variance scale;
+  `naive-baselines` command
+- `docs/phase2_naive_baselines.json`: naive-split scores for EWMA and
+  GARCH(1,1), recorded before the complex model exists
+- Tests for both baselines (including agreement with `arch`), the naive
+  split and information set, and the losses; both baseline forecasts added
+  to the look-ahead check
+- ADR-007 (baseline specifications), ADR-008 (naive-split protocol and
+  recorded numbers)
 
 ---
 
@@ -27,6 +46,10 @@ All notable changes to this project are documented here. Loosely follows
 - `notebooks/01_eda.ipynb`: return distribution, volatility clustering,
   target shape, leverage effect
 - ADR-001 (instrument), ADR-002 (horizon, target, metric)
+
+### Fixed
+- `clean_prices` uses a stable sort, so "keep the last record" for
+  duplicate dates is deterministic
 
 ---
 

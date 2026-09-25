@@ -62,7 +62,7 @@ correctly removes the mechanical price drop.
 
 ## ADR-002: Forecasting horizon, target, and evaluation metric
 
-**Status:** Accepted (Phase 1). Metric implementation lands in Phase 5.
+**Status:** Accepted (Phase 1). Metrics implemented in Phase 2 (`src/evaluate.py`).
 
 **Context:** `PROJECT.md` §7 specifies a short forward window (e.g. 1-5
 trading days) and QLIKE and/or RMSE as the evaluation metric.
@@ -74,7 +74,7 @@ trading days) and QLIKE and/or RMSE as the evaluation metric.
   and the forecast is made at the close of day t (`src/target.py`). The
   target is in variance units; volatility forecasts from every model are
   converted to 5-day variance before scoring.
-- **Primary metric:** QLIKE in the form `L(RV, F) = log(F) + RV / F`,
+- **Primary metric** (`src/evaluate.py`): QLIKE in the form `L(RV, F) = log(F) + RV / F`,
   where F is the forecast 5-day variance.
 - **Secondary metric:** MSE of the variance forecast (reported as RMSE).
 
@@ -185,7 +185,124 @@ is reported as-is.
 
 ---
 
-## ADR-007: [Template for future ADRs — delete this line and use the format below]
+## ADR-007: Simple baseline specifications
+
+**Status:** Accepted (Phase 2)
+
+**Context:** `PROJECT.md` §3 asks for EWMA and/or a GARCH-family model as
+the simple baseline, and `TASKS.md` Phase 2 names GARCH(1,1) or a
+documented alternative order. Both were specified before any model was
+scored.
+
+**Decision:**
+- **EWMA** (`src/baseline_ewma.py`):
+  `s2_{t+1|t} = 0.94 * s2_{t|t-1} + 0.06 * r_t^2`, zero mean, seeded with
+  the mean squared return of the first 30 returns. λ = 0.94 is the
+  RiskMetrics (1996) daily value and is **not estimated**, so EWMA has zero
+  fitted parameters. EWMA treats variance as a random walk, so the 5-day
+  forecast is `5 * s2_{t+1|t}`.
+- **GARCH(1,1)** (`src/baseline_garch.py`): zero mean, Gaussian
+  quasi-maximum likelihood via `arch` (returns scaled ×100 for the
+  optimizer, parameters converted back). The 5-day forecast is the sum of
+  the 1..5-step analytic forecasts,
+  `s2_{t+k|t} = vbar + (α+β)^(k-1) (s2_{t+1|t} - vbar)`. Estimation and
+  filtering are separate: parameters come from the harness's information
+  set, and the recursion then runs with those parameters fixed, starting
+  from the parameter-implied unconditional variance. Tests check the filter
+  and the 5-day forecast against `arch`'s own output to 1e-9.
+
+Why these choices:
+- Zero mean for both: the target is a sum of squared returns without
+  demeaning (ADR-002), and the mean daily return (≈0.0004) is negligible
+  next to daily volatility (≈0.012).
+- Gaussian QML rather than Student-t: QML estimates of the variance
+  parameters stay consistent when returns are fat-tailed. The Gaussian
+  one-step likelihood is also a QLIKE loss, so the estimator and the
+  primary metric share one criterion.
+- Fixed rather than estimated λ keeps EWMA as a zero-parameter reference.
+  Nothing about it can be fitted to the test period under any validation
+  scheme.
+- **GJR-GARCH was considered and not used.** The EDA (run on the full
+  sample) found a leverage effect, which symmetric GARCH(1,1) cannot
+  represent. Switching the baseline on the strength of a full-sample EDA
+  observation would be exactly the data-driven model choice ADR-001 says
+  the EDA does not make. GARCH(1,1) is what the task specified, and it was
+  kept.
+
+**Consequences:**
+- The simple side of the comparison cannot capture the leverage effect. A
+  complex model that uses signed returns may gain from this, and that is a
+  legitimate advantage, not an artefact. The results discussion must
+  attribute it that way rather than to "ML" in general.
+- EWMA with a fixed λ is not tuned to SPY, so it may be a weaker baseline
+  than an estimated-λ EWMA. GARCH(1,1) is the estimated simple model.
+
+---
+
+## ADR-008: Naive random-split protocol and the recorded Phase 2 baseline numbers
+
+**Status:** Accepted (Phase 2)
+
+**Context:** `TASKS.md` Phase 2 requires the baselines to be scored under a
+naive random split, and those numbers recorded before the complex model
+exists. The same split has to be reusable for the complex model in Phase 5.
+
+**Decision:**
+- **Forecast dates:** every date with a complete 5-day target, after a
+  burn-in of 252 rows (one trading year). That gives 8,030 dates, from
+  1994-01-28 to 2025-12-23. The burn-in is shared by all models, so every
+  model is scored on identical dates. It also caps the lookback of any
+  Phase 3 feature at 252 rows unless the burn-in is revised for all models
+  together.
+- **Split:** the dates are shuffled once (`numpy` `default_rng(0)`) and
+  split 80/20: 6,424 training dates and 1,606 test dates, interleaved in
+  time.
+- **Information set (shared with walk-forward):** a model is handed only
+  the data its training rows touch. A training row at `t` has features
+  dated `<= t` and a target built from returns `t+1..t+5`, so the history
+  ends 5 rows after the last training date (`information_set_end` in
+  `src/validation.py`). Under walk-forward, with training dates purged to
+  `<= T-5`, this rule ends the history exactly at the forecast origin `T`.
+  Under the random split, the last training date is near the end of the
+  sample, so the history runs to 2025-12-31. For GARCH this means
+  estimation on the full sample, including every test week. That is what a
+  random split amounts to for a model estimated on one contiguous return
+  series, rather than an extra choice.
+- **Record:** `python -m src.evaluate naive-baselines` writes
+  `docs/phase2_naive_baselines.json`. The output is deterministic and
+  contains no timestamp. The commit that adds it dates the record.
+
+**Recorded result (naive random split, 1,606 test dates; contrast only,
+not the project's result):**
+
+| Model | QLIKE (lower is better) | RMSE of 5-day variance |
+|---|---|---|
+| EWMA (λ = 0.94) | −6.6257 | 1.490e-03 |
+| GARCH(1,1) | −6.6671 | 1.403e-03 |
+
+The full-sample GARCH(1,1) estimate is ω = 2.13e-06, α = 0.111,
+β = 0.873, persistence 0.984, and implied unconditional volatility 18.2%
+annualized.
+
+These numbers were recorded, then set aside. They carry no significance
+test and are not evidence about out-of-sample performance.
+
+**Consequences:**
+- For these two baselines, the random split can affect the score through
+  only two channels. First, the set of dates scored. Second, for GARCH
+  only, estimating three parameters on data that include the test weeks.
+  Neither model learns from individual target rows, so the overlap between
+  training and test targets gives them nothing to exploit. A model fitted
+  row by row to targets (Phase 3) is exposed to that overlap as well. How
+  much any of this matters is a Phase 5 measurement, not an assumption.
+- `PROJECT.md` §2 says the baseline's out-of-sample performance should be
+  recorded before the complex model exists, while `TASKS.md` places the
+  walk-forward harness in Phase 4. This phase follows `TASKS.md`, and only
+  the naive number is on record so far.
+
+---
+
+## ADR-009: [Template for future ADRs — delete this line and use the format below]
 
 **Status:** Proposed / Accepted / Superseded / Rejected
 
