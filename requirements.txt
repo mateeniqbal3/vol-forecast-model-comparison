@@ -7,4 +7,4 @@ lightgbm>=4.7
 yfinance>=0.2
 matplotlib>=3.9
 pytest>=8.2
-ruff>=0.5
+ruff==0.16.9

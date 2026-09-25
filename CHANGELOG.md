@@ -6,7 +6,22 @@ All notable changes to this project are documented here. Loosely follows
 ## [Unreleased]
 
 ### Planned
-- CI workflow, README and final documentation (Phases 6-7)
+- README and final documentation (Phase 7)
+
+---
+
+## [0.7.0] — 2026-09-25 — CI
+
+### Changed
+- `.github/workflows/ci.yml`: workflow token restricted to read-only
+  repository contents
+- `requirements.txt`: `ruff==0.16.9` pinned, so lint results do not
+  change with new ruff releases
+
+### Verified
+- The CI steps (`ruff check src/ tests/`, `pytest tests/ -v`) pass on a
+  fresh Python 3.11.13 install of `requirements.txt`: lint clean, 92 tests
+  passed. The tests use synthetic data only, so CI needs no download.
 
 ---
 

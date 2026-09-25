@@ -80,11 +80,11 @@ baseline (Phase 2) must be built and its results recorded first.
       justified out-of-sample, under proper validation?
 - [x] If multiple feature sets/hyperparameter configurations were tried
       for the complex model, log and disclose the count in `DECISIONS.md`
-- [ ] Commit: "feat: full model comparison complete — see docs/results_comparison.md"
+- [x] Commit: "feat: full model comparison complete — see docs/results_comparison.md"
 
 ## Phase 6 — CI
 
-- [ ] `.github/workflows/ci.yml`: lint + test on push/PR to `main`
+- [x] `.github/workflows/ci.yml`: lint + test on push/PR to `main`
 - [ ] Commit: "ci: add lint + test workflow"
 
 ## Phase 7 — Documentation Polish
