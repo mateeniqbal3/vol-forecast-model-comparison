@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src import baseline_ewma, baseline_garch
+from src import baseline_ewma, baseline_garch, complex_model
 from src.data import add_log_returns
 from src.target import HORIZON, forward_realized_variance
 from tests.lookahead import assert_no_lookahead, leaking_cut_dates
@@ -119,6 +119,9 @@ FEATURE_BUILDERS = {
     # Filtering only; estimation is confined to the information set by the harness.
     "garch_forecast_fixed_params": lambda prices: baseline_garch.forecast(
         add_log_returns(prices)["log_return"], _FIXED_GARCH
+    ),
+    "complex_model_features": lambda prices: complex_model.build_features(
+        add_log_returns(prices)
     ),
 }
 

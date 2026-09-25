@@ -131,19 +131,93 @@ this if relevant._
 
 ## ADR-004: Complex model feature set and configuration count
 
-**Status:** Proposed — resolves at the end of Phase 3/5
+**Status:** Accepted (Phase 3). The configuration log below stays open
+until Phase 5.
 
 **Context:** `PROJECT.md` §2 requires the complex model be given a
 genuinely fair chance, and `PROJECT.md` §12 requires disclosing how many
 feature sets/hyperparameter configurations were tried.
 
-**Decision:** _Fill in: final feature set, model type and
-hyperparameters, and the actual count of configurations evaluated before
-arriving at this one._
+**Decision:** The design below was fixed in Phase 3. The ML model had not
+been scored under any scheme, and walk-forward numbers did not exist for
+any model. The only scores in existence were the Phase 2 naive-split
+baseline numbers (ADR-008). The design was chosen on the literature and on
+general principles, not by reference to those numbers.
 
-**Consequences:** _Fill in — does the configuration count suggest any
-risk that the reported complex-model result is itself optimistic due to
-selection, even under walk-forward validation?_
+*Model.* LightGBM gradient-boosted trees (`src/complex_model.py`) with the
+**gamma objective (log link)**. The gamma deviance of a forecast `F` for
+`RV` is `2 (RV/F - log(RV/F) - 1)`, which is the project's QLIKE loss plus
+terms that do not depend on `F`. The model is therefore trained on the
+primary evaluation metric, and it predicts the conditional mean of RV,
+which is the QLIKE-optimal forecast. That avoids the retransformation bias
+of fitting log RV with squared error and exponentiating. RV is strictly
+positive on every date (Phase 1 EDA: no week with RV = 0), as the gamma
+objective requires.
+
+*Features:* 18 in total, all computed at the close of `t` from SPY's own
+OHLCV. The maximum lookback is 252 rows, the burn-in fixed in ADR-008.
+
+| Group | Features | Rationale |
+|---|---|---|
+| Realized variance, HAR-style | mean r² over 1, 5, 22, 66, 252 days | Corsi (2009) HAR: daily/weekly/monthly components, plus quarterly and yearly levels that anchor mean reversion |
+| Signed returns | sum of r over 1, 5, 22 days | Leverage effect and trend/drawdown dependence, which GARCH(1,1) cannot represent |
+| Downside semivariance | mean of r²·1{r<0} over 5, 22 days | Barndorff-Nielsen, Kinnebrock & Shephard (2010); Patton & Sheppard (2015) |
+| Range-based variance | Parkinson `ln(H/L)²/(4 ln 2)`, mean over 1, 5, 22 days | Uses intraday high/low; much less noisy than a squared close-to-close return |
+| Overnight gap | `ln(O_t/C_{t-1})²`, mean over 1, 5 days | Separates the overnight part of close-to-close variance |
+| Volume | `ln(V_t / mean V over 22d)`, `ln(mean V over 5d / mean V over 252d)` | Abnormal activity; relative to its own history because SPY volume grew by orders of magnitude after 1993 |
+| Drawdown | `ln(C_t / max C over 252d)` | Stress regime indicator |
+
+Tree models are invariant to monotone transforms of individual features,
+so the features are left in their natural units. Excluded on purpose:
+other tickers (e.g. VIX), which are a different information set, not more
+model complexity. Also excluded: baseline forecasts as inputs, which would
+make the model a stack of the baseline rather than an alternative to it.
+
+*Training procedure (identical under every validation scheme; all
+selection happens inside `fit`, on the training dates only):*
+1. Split the training dates in time order: the first 80% for inner
+   training, and the last 20% for inner validation. Inner-validation dates
+   within 5 rows of the last inner-training date are purged, so no
+   inner-training target overlaps an inner-validation target.
+2. For each of 12 grid points, `num_leaves ∈ {7, 15, 31}` ×
+   `min_child_samples ∈ {50, 200}` × `reg_lambda ∈ {0, 10}`, with fixed
+   `learning_rate = 0.03`, `subsample = 0.8` (every iteration),
+   `colsample_bytree = 0.8`, `seed = 0` and deterministic mode: train with
+   early stopping (100 rounds, at most 2,000 trees) on inner-validation
+   gamma deviance.
+3. Pick the grid point with the lowest inner-validation QLIKE.
+4. Refit on all training dates with that grid point and its early-stopped
+   number of trees.
+
+*Configuration log.* A configuration is one design of the model: its
+features, objective, grid and training procedure. The automated 12-point
+inner grid above belongs to configuration #1 and runs identically in every
+fold. Any later change to the design, for any reason, is appended here
+with the reason and with what the author had seen when making it.
+
+| # | Date | Change | Reason | Model performance seen at the time |
+|---|---|---|---|---|
+| 1 | 2026-09-25 | Initial design (above) | Literature and principles, before any fit on real data | None for the ML model. Phase 2 naive baseline numbers only |
+
+Operational smoke run after the design was fixed (not a configuration and
+not an evaluation). It fitted configuration #1 on the real forecast dates up
+to 2004-12-31 (2,752 dates, 2.4 s) and up to 2019-12-31 (6,527 dates,
+4.1 s). It checked that no forecast date has incomplete features, and it
+printed only run time, the selected grid point, the tree count (148 and
+130) and the forecast range (median ≈13–14% annualized). No loss was
+computed or printed, including the inner-validation scores. Nothing was
+changed as a result.
+
+**Consequences:**
+- The ML model has more information than the baselines, not just more
+  flexibility: intraday range, open and volume. Any advantage it shows
+  cannot be attributed to model complexity alone. Phase 5 must say so.
+- Early stopping and the inner grid are chosen from the most recent 20%
+  of each training set, which favors settings that work in the latest
+  regime.
+- The design is fixed before any evaluation, but it still uses the
+  author's general knowledge of the volatility literature. That is a fair
+  prior and does not come from this sample's out-of-sample results.
 
 ---
 
@@ -297,8 +371,11 @@ test and are not evidence about out-of-sample performance.
   much any of this matters is a Phase 5 measurement, not an assumption.
 - `PROJECT.md` §2 says the baseline's out-of-sample performance should be
   recorded before the complex model exists, while `TASKS.md` places the
-  walk-forward harness in Phase 4. This phase follows `TASKS.md`, and only
-  the naive number is on record so far.
+  walk-forward harness in Phase 4. The owner decided at the start of Phase 3
+  to keep the `TASKS.md` order. No walk-forward number exists for any model
+  until the complex model is built, so its feature design cannot target the
+  baseline's walk-forward score. Only the naive baseline numbers existed
+  while the complex model was designed.
 
 ---
 

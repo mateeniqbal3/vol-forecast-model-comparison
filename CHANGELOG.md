@@ -6,9 +6,29 @@ All notable changes to this project are documented here. Loosely follows
 ## [Unreleased]
 
 ### Planned
-- Complex ML model (gradient boosting / small neural network)
 - Walk-forward validation harness (plus naive-split mode for comparison)
 - Naive-vs-walk-forward, simple-vs-complex comparison and verdict
+
+---
+
+## [0.4.0] — 2026-09-25 — Complex model
+
+### Added
+- `src/complex_model.py`: LightGBM with the gamma objective (equivalent to
+  QLIKE up to terms that do not depend on the forecast), 18 causal features
+  from SPY's own OHLCV (HAR-style realized variance, signed returns,
+  downside semivariance, Parkinson range, overnight gap, relative volume,
+  drawdown), and hyperparameter selection inside `fit` via a purged
+  chronological inner split over a fixed 12-point grid with early stopping
+- Tests for feature values, burn-in, the inner split and its purge,
+  determinism, input checks, and recovery of the true conditional variance
+  on simulated GARCH data; the feature builder is added to the look-ahead
+  check
+- ADR-004: pre-registered design and configuration log (one configuration)
+
+### Changed
+- `tests/conftest.py`: synthetic price generator takes a length and seed
+- `requirements.txt`: `lightgbm>=4.7` (`eval_X`/`eval_y` API)
 
 ---
 

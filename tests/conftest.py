@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
+SYNTHETIC_GARCH = {"omega": 2e-6, "alpha": 0.08, "beta": 0.9}
 
-@pytest.fixture
-def synthetic_prices() -> pd.DataFrame:
-    """300 business days of OHLCV with GARCH(1,1)-style volatility clustering."""
-    rng = np.random.default_rng(42)
-    n = 300
-    omega, alpha, beta = 2e-6, 0.08, 0.9
+
+def make_synthetic_prices(n: int, seed: int = 42) -> pd.DataFrame:
+    """``n`` business days of OHLCV with GARCH(1,1)-style volatility clustering."""
+    rng = np.random.default_rng(seed)
+    omega, alpha, beta = SYNTHETIC_GARCH.values()
     var = omega / (1 - alpha - beta)
     returns = np.empty(n)
     for i in range(n):
@@ -26,3 +26,8 @@ def synthetic_prices() -> pd.DataFrame:
         {"open": open_, "high": high, "low": low, "close": close, "volume": volume},
         index=index,
     )
+
+
+@pytest.fixture
+def synthetic_prices() -> pd.DataFrame:
+    return make_synthetic_prices(300)

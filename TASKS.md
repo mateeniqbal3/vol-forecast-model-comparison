@@ -38,19 +38,19 @@ baseline (Phase 2) must be built and its results recorded first.
       to have that naive number on record for the Phase 5 comparison —
       then set it aside
 - [x] `tests/test_baseline_ewma.py`, `tests/test_baseline_garch.py`
-- [ ] Commit: "feat: simple baselines (EWMA, GARCH) implemented and recorded"
+- [x] Commit: "feat: simple baselines (EWMA, GARCH) implemented and recorded"
 
 ## Phase 3 — Complex Model
 
-- [ ] Write `src/complex_model.py`: a gradient-boosting or small
+- [x] Write `src/complex_model.py`: a gradient-boosting or small
       neural-network model using engineered features (lagged realized
       volatility, returns, volume, etc.)
-- [ ] Give it a genuinely fair chance — reasonable feature set,
+- [x] Give it a genuinely fair chance — reasonable feature set,
       reasonable hyperparameter search — per `PROJECT.md` §2; do not
       deliberately weaken it
-- [ ] Add every feature builder to `FEATURE_BUILDERS` in
+- [x] Add every feature builder to `FEATURE_BUILDERS` in
       `tests/test_target.py` so the look-ahead check covers it
-- [ ] `tests/test_complex_model.py`
+- [x] `tests/test_complex_model.py`
 - [ ] Commit: "feat: complex ML model for volatility forecasting"
 
 ## Phase 4 — Walk-Forward Validation (mandatory)
