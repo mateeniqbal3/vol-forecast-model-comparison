@@ -3,6 +3,10 @@
 [![CI](https://github.com/mateeniqbal3/vol-forecast-model-comparison/actions/workflows/ci.yml/badge.svg)](https://github.com/mateeniqbal3/vol-forecast-model-comparison/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![SPY 5-day volatility, 2000–2025: LightGBM's apparent edge over GARCH(1,1) disappears under walk-forward validation](paper/figures/readme_hero.png)
+
+📄 **Working paper:** [`paper/writeup.pdf`](paper/writeup.pdf) (source: [`paper/writeup.md`](paper/writeup.md))
+
 This project compares a simple volatility model (EWMA and GARCH(1,1))
 with a gradient-boosted ML model (LightGBM) for forecasting SPY's 5-day
 realized variance. Every model is scored twice: under a naive random split
@@ -320,6 +324,10 @@ notebooks/01_eda.ipynb
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): data, model and validation flow
 - [`PROJECT.md`](PROJECT.md): the original specification
 - [`CHANGELOG.md`](CHANGELOG.md): version history
+- [`paper/writeup.md`](paper/writeup.md): working paper (PDF:
+  [`paper/writeup.pdf`](paper/writeup.pdf)); figures from
+  `python paper/make_figures.py`, PDF from `python paper/build_pdf.py`
+- [`CITATION.cff`](CITATION.cff): how to cite this project
 
 ## Tech stack
 

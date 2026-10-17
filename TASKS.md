@@ -97,9 +97,8 @@ baseline (Phase 2) must be built and its results recorded first.
       window sizes, metric choice, configuration-count disclosure, and
       critically the verdict itself, stated precisely)
 - [x] `CHANGELOG.md` v1.0.0 entry
-- [x] (Optional) `paper/writeup.md` if the README doesn't fully capture
-      the story on its own (not needed; the file points to the README and
-      `docs/results_comparison.md`)
+- [x] (Optional) `paper/writeup.md`: written as a full working paper
+      (v1.1.0, PDF in `paper/writeup.pdf`)
 - [x] Final review: does the README ever claim the complex model is
       "better" (or "not better") without pointing to the specific
       walk-forward numbers that support that claim?

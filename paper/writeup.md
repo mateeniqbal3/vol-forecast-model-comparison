@@ -1,8 +1,11 @@
 # When Validation Changes the Answer: GARCH(1,1) versus Gradient Boosting for Forecasting S&P 500 ETF Volatility
 
 **Muhammad Mateen Iqbal**
-September 2026 · Draft · Code, data manifest and all recorded outputs:
-[github.com/mateeniqbal3/vol-forecast-model-comparison](https://github.com/mateeniqbal3/vol-forecast-model-comparison) (v1.0.0)
+BS Data Science, Institute of Computing & IT, University of Lakki Marwat, Pakistan
+muhammadmateen1024@gmail.com
+
+Working paper, version 1.1 — October 2026
+Code, data manifest and all recorded outputs: <https://github.com/mateeniqbal3/vol-forecast-model-comparison>
 
 ---
 
@@ -33,6 +36,12 @@ while the autumn of 2008 realized up to 0.035 (about 133%). That one year
 moves the full-sample QLIKE difference by +0.027, more than twice
 LightGBM's net advantage. The added complexity was not justified, and
 naive validation would have concluded the opposite.
+
+**Keywords:** volatility forecasting, GARCH, gradient boosting, LightGBM,
+walk-forward validation, data leakage, QLIKE, Diebold–Mariano test,
+pre-registration
+
+**JEL classification:** C52, C53, C58, G17
 
 ---
 
@@ -302,7 +311,7 @@ also have a walk-forward forecast.
 **Table 1. Mean QLIKE and RMSE (lower is better)**
 
 | Model | Naive, all (n = 1,606) | Naive, same dates (n = 1,321) | Walk-forward, same dates (n = 1,321) | Walk-forward, all (n = 6,534) |
-|---|---|---|---|---|
+|--------------|---------------------|---------------------|---------------------|---------------------|
 | *QLIKE* | | | | |
 | EWMA | −6.6257 | −6.5997 | −6.5997 | −6.5887 |
 | GARCH(1,1) | −6.6671 | −6.6438 | −6.6356 | −6.6327 |
@@ -316,7 +325,7 @@ also have a walk-forward forecast.
 mean loss minus the second's; negative values favor the first model.**
 
 | Scheme | Metric | Pair | Mean difference | DM (lag) | p | p at lag 63 |
-|---|---|---|---|---|---|---|
+|------------|--------|----------------------|--------------|------------|--------|----------|
 | Walk-forward | QLIKE | LightGBM − GARCH | −0.0124 | −0.71 (10) | **0.47** | 0.65 |
 | Walk-forward | QLIKE | LightGBM − EWMA | −0.0565 | −2.56 (10) | 0.011 | 0.070 |
 | Walk-forward | QLIKE | GARCH − EWMA | −0.0440 | −3.87 (10) | 0.0001 | 0.0002 |
@@ -344,7 +353,7 @@ isolates the scheme effect (Table 3).
 **Table 3. Naive minus walk-forward loss on the 1,321 common dates**
 
 | Model | QLIKE difference | p | MSE difference | p |
-|---|---|---|---|---|
+|------------|------------------------|--------|----------------|--------|
 | EWMA | 0 (identical forecasts) | — | 0 | — |
 | GARCH(1,1) | −0.0082 | 0.033 | −1.15e-07 | 0.094 |
 | LightGBM | −0.0654 | 0.004 | −7.87e-07 | 0.14 |
@@ -380,6 +389,12 @@ lead is 0.080 under the naive split and 0.023 under walk-forward. On RMSE
 the ranking reverses: LightGBM is best under the naive split and worst of
 the three models under walk-forward.
 
+![Figure 1. QLIKE improvement over EWMA on the 1,321 common dates, under the naive split and under walk-forward validation.](figures/fig1_scheme_effect.png)
+
+*Figure 1. Mean QLIKE minus EWMA's on the 1,321 dates scored under both
+schemes (EWMA's forecasts are identical under both). The gap between each
+pair of bars is the scheme effect in Table 3.*
+
 ### 7.3 Mechanism: the forecast ceiling of a tree ensemble
 
 A boosted tree ensemble predicts by summing leaf values, and each leaf
@@ -410,10 +425,23 @@ GARCH(1,1) has no such bound. Its forecast is linear in $r_t^2$, and it
 reached 0.0138 (about 83% annualized) in the same weeks. That is still far
 below realized variance, but six times the tree model's ceiling.
 
+![Figure 2. Per walk-forward fold: the largest training target, peak realized variance, and each model's peak forecast.](figures/fig2_forecast_ceiling.png)
+
+*Figure 2. For each walk-forward test year: the largest target in that
+fold's training set (dashed), the peak realized 5-day variance (circles),
+and the peak forecast of GARCH(1,1) and LightGBM. Log scale.*
+
 **Consequence for the comparison.** In 2008 LightGBM's QLIKE is worse
 than GARCH's by 0.70 per date. Averaged over all 6,534 dates, that one
 year adds +0.027 to the mean difference, more than twice LightGBM's net
 advantage of 0.012 (Appendix Table A1).
+
+![Figure 3. Each year's contribution to the full-sample walk-forward QLIKE difference, LightGBM minus GARCH(1,1).](figures/fig3_yearly_contribution.png)
+
+*Figure 3. Each year's contribution to the mean walk-forward QLIKE
+difference, LightGBM minus GARCH(1,1); the bars sum to −0.0124. Negative
+favours LightGBM. 2008 and 2020, the two years in which realized variance
+exceeded the training maximum, are highlighted.*
 
 **Other volatile years.** A consistent pattern appears across them. It was
 examined after the results were known and is descriptive:
@@ -524,6 +552,25 @@ value in volatility forecasting depends on whether it can extrapolate into
 regimes it has not seen, and only a validation scheme that withholds those
 regimes can tell.
 
+## Data and code availability
+
+All code, tests, the design record (`DECISIONS.md`) and every recorded
+output are available at
+<https://github.com/mateeniqbal3/vol-forecast-model-comparison> under the
+MIT License, and each release is archived on Zenodo (the DOI is listed in
+the repository README). Raw prices are not redistributed; the data manifest
+records checksums of the return series used. Appendix B lists the command
+that regenerates each output. The figures are produced by
+`python paper/make_figures.py` from the committed result files only.
+
+## Acknowledgements and AI-use disclosure
+
+AI tools (Claude, Anthropic) were used to assist with parts of the
+software implementation and with drafting and editing this paper. All
+research decisions, including the pre-registered design and decision rule,
+were made and approved by the author, who takes full responsibility for
+the content. Any errors are the author's own.
+
 ---
 
 ## References
@@ -607,7 +654,7 @@ yearly QLIKE differences, weighted by each year's share of dates, sum to
 the full-sample difference of −0.0124.
 
 | Year | n | QLIKE GARCH(1,1) | QLIKE LightGBM | Δ QLIKE | Δ MSE | Max realized RV | Training max RV | Dates above training max |
-|---|---|---|---|---|---|---|---|---|
+|------|------|------------|------------|----------|-----------|----------|----------|-----------|
 | 2000 | 252 | −5.7562 | −5.7141 | +0.0421 | +6.82e-08 | 0.0063 | 0.0099 | 0 |
 | 2001 | 248 | −5.9895 | −6.0661 | −0.0765 | −1.88e-07 | 0.0045 | 0.0099 | 0 |
 | 2002 | 252 | −5.6494 | −5.7347 | −0.0853 | −2.28e-07 | 0.0074 | 0.0099 | 0 |
@@ -643,7 +690,7 @@ in Section 3, which are printed by the executed EDA notebook
 (`notebooks/01_eda.ipynb`).
 
 | Output | Command | Contents |
-|---|---|---|
+|----------------------------------------|----------------------------------|------------------------------|
 | `data/dataset_manifest.json` | `python -m src.data` | Sample, cleaning counts, return checksums |
 | `docs/phase2_naive_baselines.json` | `python -m src.evaluate naive-baselines` | Baseline naive scores, recorded before the ML model existed |
 | `docs/phase4_validation_results.json` | `python -m src.evaluate validate` | All models under both schemes; per-fold fitted parameters |

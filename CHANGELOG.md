@@ -7,6 +7,25 @@ All notable changes to this project are documented here. Loosely follows
 
 ---
 
+## [1.1.0] — 2026-10-17 — Working paper
+
+No change to any model, result or recorded output.
+
+### Added
+- `paper/writeup.md`: full working paper (the 2026-09-25 draft, plus
+  affiliation, keywords, JEL codes, figures, data-availability and AI-use
+  statements), with the built PDF `paper/writeup.pdf`
+- `paper/make_figures.py`: figures for the paper and README, generated only
+  from `docs/phase5_comparison.json`
+- `paper/build_pdf.py`: builds the PDF from the Markdown with pandoc and
+  XeLaTeX
+- README results chart and paper link; `CITATION.cff`
+
+### Changed
+- `pyproject.toml` version 1.0.0 → 1.1.0
+
+---
+
 ## [1.0.0] — 2026-09-25 — Comparison complete
 
 First complete release. EWMA, GARCH(1,1) and LightGBM volatility forecasts

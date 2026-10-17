@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this code or its results, please cite it as below."
+type: software
+title: "When Validation Changes the Answer: GARCH(1,1) versus Gradient Boosting for Forecasting S&P 500 ETF Volatility"
+abstract: >-
+  EWMA, GARCH(1,1) and LightGBM forecasts of SPY's 5-day realized variance,
+  each scored under a naive random split and under purged expanding-window
+  walk-forward validation (26 annual folds, 2000-2025). Under walk-forward
+  validation LightGBM's QLIKE advantage over GARCH(1,1) is 0.0124 and not
+  significant (Diebold-Mariano p = 0.47); the naive split made it look like
+  a decisive winner (p < 0.0001). The failure is traced to the forecast
+  ceiling of a tree ensemble during the 2008 crisis.
+authors:
+  - family-names: "Iqbal"
+    given-names: "Muhammad Mateen"
+    email: "muhammadmateen1024@gmail.com"
+    affiliation: "Institute of Computing & IT, University of Lakki Marwat"
+version: "1.1.0"
+date-released: "2026-10-17"
+license: MIT
+repository-code: "https://github.com/mateeniqbal3/vol-forecast-model-comparison"
+keywords:
+  - volatility forecasting
+  - GARCH
+  - gradient boosting
+  - LightGBM
+  - walk-forward validation
+  - data leakage
+  - Diebold-Mariano test
+  - pre-registration
+# After Zenodo mints a DOI, add it here (uncomment and replace):
+# doi: "10.5281/zenodo.XXXXXXX"
