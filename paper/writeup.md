@@ -325,7 +325,7 @@ also have a walk-forward forecast.
 mean loss minus the second's; negative values favor the first model.**
 
 | Scheme | Metric | Pair | Mean difference | DM (lag) | p | p at lag 63 |
-|------------|--------|----------------------|--------------|------------|--------|----------|
+|---------------------------------------|--------------|----------------------------------------------|--------------------------|-------------------------|-----------------------|-----------------------|
 | Walk-forward | QLIKE | LightGBM − GARCH | −0.0124 | −0.71 (10) | **0.47** | 0.65 |
 | Walk-forward | QLIKE | LightGBM − EWMA | −0.0565 | −2.56 (10) | 0.011 | 0.070 |
 | Walk-forward | QLIKE | GARCH − EWMA | −0.0440 | −3.87 (10) | 0.0001 | 0.0002 |

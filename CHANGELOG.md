@@ -20,6 +20,9 @@ No change to any model, result or recorded output.
 - `paper/build_pdf.py`: builds the PDF from the Markdown with pandoc and
   XeLaTeX
 - README results chart and paper link; `CITATION.cff`
+- `paper/build_arxiv.py` and `paper/arxiv/main.tex`: arXiv-ready LaTeX
+  source (pdfLaTeX, standard packages, references inline); the script also
+  writes the upload zip and can compile it as a check
 
 ### Changed
 - `pyproject.toml` version 1.0.0 → 1.1.0

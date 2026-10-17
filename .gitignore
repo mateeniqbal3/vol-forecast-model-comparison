@@ -25,3 +25,7 @@ Thumbs.db
 # Local development-tool configuration (not part of the research artifact)
 CLAUDE.md
 .claude/
+
+# arXiv bundle and local compile check (rebuilt by paper/build_arxiv.py)
+paper/arxiv/arxiv_submission.zip
+paper/arxiv/main_check.pdf
